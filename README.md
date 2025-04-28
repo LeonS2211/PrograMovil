@@ -20,18 +20,18 @@ Android Studio es el IDE oficial de Google para desarrollar aplicaciones Android
 #### 1. Descargar Android Studio desde la página oficial de Android Studio:
  https://developer.android.com/studio.
 
-![Pagina web Android Studio](imgs/imagen2.png)
+![Pagina web Android Studio](imgs/Imagen2.png)
 
 *<b>Figura 2:</b> Pagina web de Android Studio*
 
 #### 2. Instalar Android Studio en Windows.
 
-![Instalacion Android Studio](imgs/imagen3.png)
+![Instalacion Android Studio](imgs/Imagen3.png)
 
 *<b>Figura 3:</b> Instalación de Android Studio*
 
 #### 3. Dentro de Android Studio, instalar los siguientes SDK Tools
-![Instalacion de SDK Tools](imgs/imagen4.png)
+![Instalacion de SDK Tools](imgs/Imagen4.png)
 
 *<b>Figura 4:</b> Instalación de SDK Tools*
 
@@ -41,18 +41,18 @@ Flutter es un framework de Google para crear aplicaciones nativas para iOS y And
 
 #### 1. Descargar Flutter desde la pagina oficial de Flutter. https://docs.flutter.dev/get-started/install/windows/desktop
 
-![Descarga de Flutter](imgs/imagen5.png)
+![Descarga de Flutter](imgs/Imagen5.png)
 
 *<b>Figura 5:</b> Descarga de Flutter SDK*
 
 #### 2. Descomprimir el archivo zip y agregar la ruta a la carpeta bin a las variables del entorno del sistema.
 
-![Agregación de la Carpeta bin](imgs/imagen6.png)
+![Agregación de la Carpeta bin](imgs/Imagen6.png)
 
 *<b>Figura 6:</b> Agregación de la carpeta bin a variables de entorno del sistema*
 
 #### 3. Aceptar licencias de android en Flutter usando el comando: flutter doctor --android-licenses
-![Aceptación de licencias de android en Flutter](imgs/imagen7.png)
+![Aceptación de licencias de android en Flutter](imgs/Imagen7.png)
 
 *<b>Figura 7:</b> Aceptación de licencias de android en Flutter*
 

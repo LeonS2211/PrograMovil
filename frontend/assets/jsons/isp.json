@@ -1,0 +1,63 @@
+[
+    {
+      "id": 1,
+      "statement": "¿Cuál es la capital de Francia?",
+      "created": "2025-05-09T12:30:00Z",
+      "points": 10
+    },
+    {
+      "id": 2,
+      "statement": "¿Quién escribió 'Cien años de soledad'?",
+      "created": "2025-05-08T09:15:00Z",
+      "points": 15
+    },
+    {
+      "id": 3,
+      "statement": "¿Cuál es el resultado de 7 x 8?",
+      "created": "2025-05-07T14:00:00Z",
+      "points": 5
+    },
+    {
+      "id": 4,
+      "statement": "¿En qué año llegó el hombre a la Luna?",
+      "created": "2025-05-06T11:45:00Z",
+      "points": 10
+    },
+    {
+      "id": 5,
+      "statement": "¿Qué gas es esencial para la respiración humana?",
+      "created": "2025-05-05T10:20:00Z",
+      "points": 8
+    },
+    {
+      "id": 6,
+      "statement": "¿Cuál es el río más largo del mundo?",
+      "created": "2025-05-04T13:10:00Z",
+      "points": 12
+    },
+    {
+      "id": 7,
+      "statement": "¿Quién pintó 'La noche estrellada'?",
+      "created": "2025-05-03T08:30:00Z",
+      "points": 10
+    },
+    {
+      "id": 8,
+      "statement": "¿Qué planeta es conocido como el planeta rojo?",
+      "created": "2025-05-02T15:45:00Z",
+      "points": 6
+    },
+    {
+      "id": 9,
+      "statement": "¿Cómo se llama el proceso por el cual las plantas hacen su alimento?",
+      "created": "2025-05-01T16:00:00Z",
+      "points": 9
+    },
+    {
+      "id": 10,
+      "statement": "¿Qué instrumento mide los terremotos?",
+      "created": "2025-04-30T07:50:00Z",
+      "points": 7
+    }
+  ]
+  

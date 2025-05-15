@@ -13,7 +13,7 @@ build/
 android/.gradle/
 **/build/
 android/local.properties
-android/.cxx/Debug
+android/app/.cxx/Debug
 
 # VS Code
 .vscode/

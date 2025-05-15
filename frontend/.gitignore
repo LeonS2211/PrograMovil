@@ -1,0 +1,19 @@
+# Dart & Flutter
+.dart_tool/
+.packages
+build/
+.pub/
+.flutter-plugins
+.flutter-plugins-dependencies
+.melos_tool/
+.env
+
+# VS Code
+.vscode/
+
+# IntelliJ
+.idea/
+*.iml
+
+# Otros
+*.log

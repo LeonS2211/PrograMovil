@@ -8,6 +8,13 @@ build/
 .melos_tool/
 .env
 
+# Gradle
+.gradle/
+android/.gradle/
+**/build/
+android/local.properties
+android/.cxx/Debug
+
 # VS Code
 .vscode/
 
@@ -17,3 +24,4 @@ build/
 
 # Otros
 *.log
+

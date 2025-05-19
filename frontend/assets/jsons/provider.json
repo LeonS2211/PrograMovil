@@ -1,63 +1,72 @@
 [
-    {
-      "id": 1,
-      "statement": "¿Cuál es la capital de Francia?",
-      "created": "2025-05-09T12:30:00Z",
-      "points": 10
-    },
-    {
-      "id": 2,
-      "statement": "¿Quién escribió 'Cien años de soledad'?",
-      "created": "2025-05-08T09:15:00Z",
-      "points": 15
-    },
-    {
-      "id": 3,
-      "statement": "¿Cuál es el resultado de 7 x 8?",
-      "created": "2025-05-07T14:00:00Z",
-      "points": 5
-    },
-    {
-      "id": 4,
-      "statement": "¿En qué año llegó el hombre a la Luna?",
-      "created": "2025-05-06T11:45:00Z",
-      "points": 10
-    },
-    {
-      "id": 5,
-      "statement": "¿Qué gas es esencial para la respiración humana?",
-      "created": "2025-05-05T10:20:00Z",
-      "points": 8
-    },
-    {
-      "id": 6,
-      "statement": "¿Cuál es el río más largo del mundo?",
-      "created": "2025-05-04T13:10:00Z",
-      "points": 12
-    },
-    {
-      "id": 7,
-      "statement": "¿Quién pintó 'La noche estrellada'?",
-      "created": "2025-05-03T08:30:00Z",
-      "points": 10
-    },
-    {
-      "id": 8,
-      "statement": "¿Qué planeta es conocido como el planeta rojo?",
-      "created": "2025-05-02T15:45:00Z",
-      "points": 6
-    },
-    {
-      "id": 9,
-      "statement": "¿Cómo se llama el proceso por el cual las plantas hacen su alimento?",
-      "created": "2025-05-01T16:00:00Z",
-      "points": 9
-    },
-    {
-      "id": 10,
-      "statement": "¿Qué instrumento mide los terremotos?",
-      "created": "2025-04-30T07:50:00Z",
-      "points": 7
-    }
-  ]
-  
+  {
+    "id": 1,
+    "ruc": "20123456789",
+    "name": "Proveedor Alpha SAC",
+    "address": "Av. Perú 123",
+    "logo": "alpha_logo.png"
+  },
+  {
+    "id": 2,
+    "ruc": "20456789012",
+    "name": "Proveedor Beta EIRL",
+    "address": "Jr. Lima 456",
+    "logo": "beta_logo.png"
+  },
+  {
+    "id": 3,
+    "ruc": "20678901234",
+    "name": "Proveedor Gamma SRL",
+    "address": "Calle Central 789",
+    "logo": "gamma_logo.png"
+  },
+  {
+    "id": 4,
+    "ruc": "20890123456",
+    "name": "Proveedor Delta SAC",
+    "address": "Av. Arequipa 100",
+    "logo": "delta_logo.png"
+  },
+  {
+    "id": 5,
+    "ruc": "20987654321",
+    "name": "Proveedor Epsilon S.A.",
+    "address": "Jr. Cusco 654",
+    "logo": "epsilon_logo.png"
+  },
+  {
+    "id": 6,
+    "ruc": "20765432109",
+    "name": "Proveedor Zeta SAC",
+    "address": "Av. Argentina 321",
+    "logo": "zeta_logo.png"
+  },
+  {
+    "id": 7,
+    "ruc": "20543210987",
+    "name": "Proveedor Eta SAC",
+    "address": "Calle Bolívar 112",
+    "logo": "eta_logo.png"
+  },
+  {
+    "id": 8,
+    "ruc": "20321098765",
+    "name": "Proveedor Theta SAC",
+    "address": "Pasaje Ucayali 221",
+    "logo": "theta_logo.png"
+  },
+  {
+    "id": 9,
+    "ruc": "20210987654",
+    "name": "Proveedor Iota SAC",
+    "address": "Av. La Marina 505",
+    "logo": "iota_logo.png"
+  },
+  {
+    "id": 10,
+    "ruc": "20109876543",
+    "name": "Proveedor Kappa SAC",
+    "address": "Jr. Amazonas 77",
+    "logo": "kappa_logo.png"
+  }
+]

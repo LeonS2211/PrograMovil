@@ -39,4 +39,23 @@ class InvoiceService {
 
     return ServiceHttpResponse(status: 200, body: filtered);
   }
+
+  Future<ServiceHttpResponse> invoicing(Invoice invoice) async {
+  await _loadData();
+
+  try {
+    final index = _allInvoices.indexWhere((i) => i.id == invoice.id);
+
+    if (index == -1) {
+      return ServiceHttpResponse(status: 404, body: false);
+    }
+
+    _allInvoices[index].invoiced = true;
+
+    return ServiceHttpResponse(status: 200, body: true);
+  } catch (e) {
+    return ServiceHttpResponse(status: 500, body: false);
+  }
+}
+
 }

@@ -1,50 +1,58 @@
-class User {
+class Dependency {
   int? id;
-  String username;
-  String password;
-  String? email;
-  String? image;
-  String? fullname;
-  String? resetKey;
+  int companyId;
+  int providerId;
+  String name;
+  DateTime signDate;
+  String validityTime;
+  DateTime terminationDate;
+  String anniversary;
+  String equipment;
 
-  User({
+  Dependency({
     this.id,
-    required this.username,
-    required this.password,
-    this.email,
-    this.image,
-    this.fullname,
-    this.resetKey,
+    required this.companyId,
+    required this.providerId,
+    required this.name,
+    required this.signDate,
+    required this.validityTime,
+    required this.terminationDate,
+    required this.anniversary,
+    required this.equipment,
   });
 
-  // Método para crear una instancia desde un mapa (JSON)
-  factory User.fromJson(Map<String, dynamic> json) {
-    return User(
+  factory Dependency.fromJson(Map<String, dynamic> json) {
+    return Dependency(
       id: json['id'],
-      username: json['username'],
-      password: json['password'],
-      email: json['email'],
-      image: json['image'],
-      fullname: json['fullname'],
-      resetKey: json['reset_key'],
+      companyId: json['company_id'],
+      providerId: json['provider_id'],
+      name: json['name'],
+      signDate: DateTime.parse(json['sign_date']),
+      validityTime: json['validity_time'],
+      terminationDate: DateTime.parse(json['termination_date']),
+      anniversary: json['anniversary'],
+      equipment: json['equipment'],
     );
   }
 
-  // Método para convertir la instancia a un mapa (JSON)
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'username': username,
-      'password': password,
-      'email': email,
-      'image': image,
-      'fullname': fullname,
-      'reset_key': resetKey,
+      'company_id': companyId,
+      'provider_id': providerId,
+      'name': name,
+      'sign_date': signDate.toIso8601String(),
+      'validity_time': validityTime,
+      'termination_date': terminationDate.toIso8601String(),
+      'anniversary': anniversary,
+      'equipment': equipment,
     };
   }
 
   @override
   String toString() {
-    return 'User(id: $id, username: $username, email: $email, fullname: $fullname, password: $password)';
+    return 'Dependency(id: $id, companyId: $companyId, providerId: $providerId, name: $name, '
+        'signDate: $signDate, validityTime: $validityTime, terminationDate: $terminationDate, '
+        'anniversary: $anniversary, equipment: $equipment)';
   }
 }

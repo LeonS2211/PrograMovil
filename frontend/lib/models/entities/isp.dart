@@ -31,5 +31,10 @@ class Isp {
       'address': address,
     };
   }
+
+  @override
+  String toString() {
+    return 'Isp(id: $id, ruc: $ruc, name: $name, address: $address)';
+  }
 }
 

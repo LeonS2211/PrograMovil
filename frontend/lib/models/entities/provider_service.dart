@@ -1,50 +1,38 @@
-class User {
+class ProviderService {
   int? id;
-  String username;
-  String password;
-  String? email;
-  String? image;
-  String? fullname;
-  String? resetKey;
+  int providerId;
+  String description;
+  double price;
 
-  User({
+  ProviderService({
     this.id,
-    required this.username,
-    required this.password,
-    this.email,
-    this.image,
-    this.fullname,
-    this.resetKey,
+    required this.providerId,
+    required this.description,
+    required this.price,
   });
 
-  // Método para crear una instancia desde un mapa (JSON)
-  factory User.fromJson(Map<String, dynamic> json) {
-    return User(
+  // Crear una instancia desde un JSON
+  factory ProviderService.fromJson(Map<String, dynamic> json) {
+    return ProviderService(
       id: json['id'],
-      username: json['username'],
-      password: json['password'],
-      email: json['email'],
-      image: json['image'],
-      fullname: json['fullname'],
-      resetKey: json['reset_key'],
+      providerId: json['provider_id'],
+      description: json['description'],
+      price: (json['price'] as num).toDouble(), // asegura double
     );
   }
 
-  // Método para convertir la instancia a un mapa (JSON)
+  // Convertir la instancia a JSON (Map)
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'username': username,
-      'password': password,
-      'email': email,
-      'image': image,
-      'fullname': fullname,
-      'reset_key': resetKey,
+      'provider_id': providerId,
+      'description': description,
+      'price': price,
     };
   }
 
   @override
   String toString() {
-    return 'User(id: $id, username: $username, email: $email, fullname: $fullname, password: $password)';
+    return 'ProviderService(id: $id, providerId: $providerId, description: $description, price: $price)';
   }
 }

@@ -13,7 +13,7 @@ class InvoiceService {
     if (_allInvoices.isNotEmpty) return;
 
     final String jsonString =
-        await rootBundle.loadString('assets/jsons/invoices.json');
+        await rootBundle.loadString('assets/jsons/invoice.json');
     final List<dynamic> jsonList = jsonDecode(jsonString);
     _allInvoices = jsonList
         .map((map) => Invoice.fromJson(map as Map<String, dynamic>))

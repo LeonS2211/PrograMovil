@@ -37,5 +37,10 @@ class IspService {
         'cost': cost,
         'pay_code': payCode,
       };
+  @override
+  String toString() {
+    return 'IspService(id: $id, ispId: $ispId, providerId: $providerId, '
+           'description: $description, cost: $cost, payCode: $payCode)';
+  }
 }
 

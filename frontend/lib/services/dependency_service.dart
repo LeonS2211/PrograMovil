@@ -12,7 +12,7 @@ class DependencyService {
     ServiceHttpResponse serviceResponse = ServiceHttpResponse();
 
     final String body =
-        await rootBundle.loadString('assets/jsons/dependencies.json');
+        await rootBundle.loadString('assets/jsons/dependency.json');
     final List<dynamic> data = jsonDecode(body);
 
     dependencies = data

@@ -1,50 +1,40 @@
-class User {
-  int? id;
-  String username;
-  String password;
-  String? email;
-  String? image;
-  String? fullname;
-  String? resetKey;
+class Isp {
+  final int? id;
+  final String ruc;
+  final String name;
+  final String address;
 
-  User({
+
+  Isp({
     this.id,
-    required this.username,
-    required this.password,
-    this.email,
-    this.image,
-    this.fullname,
-    this.resetKey,
+    required this.ruc,
+    required this.name,
+    required this.address,
   });
 
-  // Método para crear una instancia desde un mapa (JSON)
-  factory User.fromJson(Map<String, dynamic> json) {
-    return User(
+
+  factory Isp.fromJson(Map<String, dynamic> json) {
+    return Isp(
       id: json['id'],
-      username: json['username'],
-      password: json['password'],
-      email: json['email'],
-      image: json['image'],
-      fullname: json['fullname'],
-      resetKey: json['reset_key'],
+      ruc: json['ruc'],
+      name: json['name'],
+      address: json['address'],
     );
   }
 
-  // Método para convertir la instancia a un mapa (JSON)
-  Map<String, dynamic> toMap() {
+
+  Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'username': username,
-      'password': password,
-      'email': email,
-      'image': image,
-      'fullname': fullname,
-      'reset_key': resetKey,
+      'ruc': ruc,
+      'name': name,
+      'address': address,
     };
   }
 
   @override
   String toString() {
-    return 'User(id: $id, username: $username, email: $email, fullname: $fullname, password: $password)';
+    return 'Isp(id: $id, ruc: $ruc, name: $name, address: $address)';
   }
 }
+

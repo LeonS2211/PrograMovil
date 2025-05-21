@@ -2,19 +2,19 @@ import 'dart:convert';
 
 import 'package:flutter/services.dart';
 import '../models/service_http_response.dart';
-import '../models/entities/quiz.dart';
+import '../models/entities/address.dart';
 
-class QuizService {
+class AddressService {
   Future<ServiceHttpResponse?> fetchAll() async {
-    List<Quiz> quizzes = [];
+    List<Address> addresses  = [];
     ServiceHttpResponse serviceResponse = ServiceHttpResponse();
     final String body =
-        await rootBundle.loadString('assets/jsons/quizzes.json');
+        await rootBundle.loadString('assets/jsons/address.json');
     final List<dynamic> data = jsonDecode(body);
     quizzes =
         data.map((map) => Quiz.fromJson(map as Map<String, dynamic>)).toList();
     serviceResponse.status = 200;
-    serviceResponse.body = quizzes;
+    serviceResponse.body = addresses;
     return serviceResponse;
   }
 }

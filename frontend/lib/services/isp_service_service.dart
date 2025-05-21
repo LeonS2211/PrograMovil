@@ -22,7 +22,7 @@ class IspServiceService {
 
 Future<void> fetchAll() async {
   if(isp.isEmpty){
-    final String lectura = await rootBundle.loadString('assets/jsons/isp.json');
+    final String lectura = await rootBundle.loadString('assets/jsons/isp_service.json');
     final List<dynamic> data = jsonDecode(lectura);
    
     isp = data.map((e) => IspService.fromJson(e)).toList();

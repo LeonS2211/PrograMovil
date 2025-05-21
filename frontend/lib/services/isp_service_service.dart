@@ -1,10 +1,8 @@
 import 'dart:convert';
-import 'dart:developer';
-import 'dart:ffi';
 import 'package:flutter/services.dart';
 import 'package:helloworld/models/entities/isp_service.dart';
 import '../models/service_http_response.dart';
-import '../models/entities/isp.dart';
+import '../models/entities/provider.dart';
 
 
 class IspServiceService {
@@ -24,7 +22,7 @@ class IspServiceService {
 
 Future<void> fetchAll() async {
   if(isp.isEmpty){
-    final String lectura = await rootBundle.loadString('assets/jsons/isp.json');
+    final String lectura = await rootBundle.loadString('assets/jsons/isp_service.json');
     final List<dynamic> data = jsonDecode(lectura);
    
     isp = data.map((e) => IspService.fromJson(e)).toList();

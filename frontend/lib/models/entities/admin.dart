@@ -1,32 +1,23 @@
-class User {
-  int? id;
+class Admin {
+  int id;
   String username;
   String password;
-  String? email;
-  String? image;
-  String? fullname;
-  String? resetKey;
+  List<int>? listProvider;
 
-  User({
-    this.id,
+  Admin({
+    required this.id,
     required this.username,
     required this.password,
-    this.email,
-    this.image,
-    this.fullname,
-    this.resetKey,
+    this.listProvider,
   });
 
   // Método para crear una instancia desde un mapa (JSON)
-  factory User.fromJson(Map<String, dynamic> json) {
-    return User(
+  factory Admin.fromJson(Map<String, dynamic> json) {
+    return Admin(
       id: json['id'],
       username: json['username'],
       password: json['password'],
-      email: json['email'],
-      image: json['image'],
-      fullname: json['fullname'],
-      resetKey: json['reset_key'],
+      listProvider: List<int>.from(json['listProvider'] ?? []),
     );
   }
 
@@ -36,15 +27,12 @@ class User {
       'id': id,
       'username': username,
       'password': password,
-      'email': email,
-      'image': image,
-      'fullname': fullname,
-      'reset_key': resetKey,
+      'listProvider': listProvider,
     };
   }
 
   @override
   String toString() {
-    return 'User(id: $id, username: $username, email: $email, fullname: $fullname, password: $password)';
+    return 'Admin(id: $id, username: $username, password: $password, listProvider: $listProvider)';
   }
 }

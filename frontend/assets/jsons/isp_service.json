@@ -1,63 +1,14 @@
+
 [
-    {
-      "id": 1,
-      "statement": "¿Cuál es la capital de Francia?",
-      "created": "2025-05-09T12:30:00Z",
-      "points": 10
-    },
-    {
-      "id": 2,
-      "statement": "¿Quién escribió 'Cien años de soledad'?",
-      "created": "2025-05-08T09:15:00Z",
-      "points": 15
-    },
-    {
-      "id": 3,
-      "statement": "¿Cuál es el resultado de 7 x 8?",
-      "created": "2025-05-07T14:00:00Z",
-      "points": 5
-    },
-    {
-      "id": 4,
-      "statement": "¿En qué año llegó el hombre a la Luna?",
-      "created": "2025-05-06T11:45:00Z",
-      "points": 10
-    },
-    {
-      "id": 5,
-      "statement": "¿Qué gas es esencial para la respiración humana?",
-      "created": "2025-05-05T10:20:00Z",
-      "points": 8
-    },
-    {
-      "id": 6,
-      "statement": "¿Cuál es el río más largo del mundo?",
-      "created": "2025-05-04T13:10:00Z",
-      "points": 12
-    },
-    {
-      "id": 7,
-      "statement": "¿Quién pintó 'La noche estrellada'?",
-      "created": "2025-05-03T08:30:00Z",
-      "points": 10
-    },
-    {
-      "id": 8,
-      "statement": "¿Qué planeta es conocido como el planeta rojo?",
-      "created": "2025-05-02T15:45:00Z",
-      "points": 6
-    },
-    {
-      "id": 9,
-      "statement": "¿Cómo se llama el proceso por el cual las plantas hacen su alimento?",
-      "created": "2025-05-01T16:00:00Z",
-      "points": 9
-    },
-    {
-      "id": 10,
-      "statement": "¿Qué instrumento mide los terremotos?",
-      "created": "2025-04-30T07:50:00Z",
-      "points": 7
-    }
-  ]
-  
+  { "id": 1, "isp_id": 1, "provider_id": 100, "description": "Internet 100 Mbps", "cost": 89.90, "pay_code": "CL001" },
+  { "id": 2, "isp_id": 2, "provider_id": 101, "description": "Internet 200 Mbps", "cost": 120.50, "pay_code": "MV002" },
+  { "id": 3, "isp_id": 3, "provider_id": 102, "description": "Fibra 300 Mbps", "cost": 150.00, "pay_code": "EN003" },
+  { "id": 4, "isp_id": 4, "provider_id": 103, "description": "Plan Gamer 150 Mbps", "cost": 99.99, "pay_code": "BT004" },
+  { "id": 5, "isp_id": 5, "provider_id": 104, "description": "Internet Básico 50 Mbps", "cost": 70.00, "pay_code": "FN005" },
+  { "id": 6, "isp_id": 6, "provider_id": 105, "description": "Plan Hogar 200 Mbps", "cost": 110.00, "pay_code": "NL006" },
+  { "id": 7, "isp_id": 7, "provider_id": 106, "description": "Plan PyME 500 Mbps", "cost": 199.00, "pay_code": "SP007" },
+  { "id": 8, "isp_id": 8, "provider_id": 107, "description": "Fibra 1000 Mbps", "cost": 299.99, "pay_code": "IN008" },
+  { "id": 9, "isp_id": 9, "provider_id": 108, "description": "TV + Internet 100 Mbps", "cost": 139.50, "pay_code": "MC009" },
+  { "id": 10, "isp_id": 10, "provider_id": 109, "description": "Internet Prepago 20 Mbps", "cost": 45.00, "pay_code": "IY010" }
+]
+

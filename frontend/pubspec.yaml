@@ -21,8 +21,17 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/images/
+    - assets/images/ISP.png
+    - assets/images/Propio.png.
     - assets/jsons/
+
+fonts:
+  - family: Montserrat
+    fonts:
+      - asset: assets/fonts/Montserrat-Regular.ttf
+      - asset: assets/fonts/Montserrat-Bold.ttf
+        weight: 700
+
   #  - images/a_dot_ham.jpeg
   # fonts:
   #   - family: Schyler

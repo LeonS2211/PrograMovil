@@ -9,10 +9,14 @@ import 'package:helloworld/pages/select_company/select_company_page.dart';
 import 'package:helloworld/pages/view_companies/view_companies_page.dart';
 import 'package:helloworld/pages/view_contacts/view_contacts_page.dart';
 import 'package:helloworld/pages/view_dependencies/view_dependencies_page.dart';
+import 'package:helloworld/selected_provider_controller.dart';
 import './pages/sign_in/sign_in_page.dart';
+import 'package:get/get.dart';
 
-void main() => runApp(MyApp());
-
+void main() {
+  Get.put(SelectedProviderController()); // controlador global
+  runApp(MyApp());
+}
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
   // This widget is the root of your application.

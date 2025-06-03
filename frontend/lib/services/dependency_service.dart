@@ -6,31 +6,54 @@ import '../models/entities/provider.dart';
 import '../models/entities/company.dart';
 
 class DependencyService {
-  Future<ServiceHttpResponse?> fetchByProviderAndCompany(
-      Provider provider, Company company) async {
-    List<Dependency> dependencies = [];
-    ServiceHttpResponse serviceResponse = ServiceHttpResponse();
+  List<Dependency> dependencies = [];
 
-    final String body =
-        await rootBundle.loadString('assets/jsons/dependency.json');
+  // Carga las dependencias desde el archivo JSON solo si no se ha hecho antes
+  Future<void> _loadData() async {
+    if (dependencies.isNotEmpty) return; // Si ya están cargadas, no cargar de nuevo
+
+    final String body = await rootBundle.loadString('assets/jsons/dependency.json');
     final List<dynamic> data = jsonDecode(body);
 
-    dependencies = data
-        .map((map) => Dependency.fromJson(map as Map<String, dynamic>))
-        .where((dependency) =>
-            dependency.providerId == provider.id &&
-            dependency.companyId == company.id)
-        .toList();
+    dependencies = data.map((map) => Dependency.fromJson(map as Map<String, dynamic>)).toList();
+  }
 
-    if (dependencies.isEmpty) {
+  // Devuelve las dependencias asociadas a un proveedor y una compañía
+  Future<ServiceHttpResponse?> fetchByProviderAndCompany(
+      Provider provider, Company company) async {
+    ServiceHttpResponse serviceResponse = ServiceHttpResponse();
+
+    // Cargar datos si aún no se han cargado
+    await _loadData();
+
+    // Filtrar dependencias por proveedor y compañía
+    List<Dependency> filteredDependencies = dependencies.where((dependency) =>
+        dependency.providerId == provider.id && dependency.companyId == company.id).toList();
+
+    if (filteredDependencies.isEmpty) {
       serviceResponse.status = 404;
-      serviceResponse.body =
-          'No se encontraron dependencias para el proveedor y la compañía especificados.';
+      serviceResponse.body = 'No se encontraron dependencias para el proveedor y la compañía especificados.';
     } else {
       serviceResponse.status = 200;
-      serviceResponse.body = dependencies;
+      serviceResponse.body = filteredDependencies;
     }
 
     return serviceResponse;
+  }
+
+  // Devuelve una dependencia específica por su id
+  Future<ServiceHttpResponse?> getDependencyById(int id) async {
+    ServiceHttpResponse serviceResponse = ServiceHttpResponse();
+    await _loadData(); // Asegúrate de que los datos estén cargados
+
+    try {
+      serviceResponse.status = 200;
+      serviceResponse.body = dependencies.firstWhere((dependency) => dependency.id == id);
+      return serviceResponse;
+    } catch (e) {
+      serviceResponse.status = 404;
+      serviceResponse.body = null;
+      return serviceResponse;
+    }
   }
 }

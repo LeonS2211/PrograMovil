@@ -2,14 +2,12 @@ class Provider {
   int? id;
   String ruc;
   String name;
-  String address;
   String logo;
 
   Provider({
     this.id,
     required this.ruc,
     required this.name,
-    required this.address,
     required this.logo,
   });
 
@@ -19,7 +17,6 @@ class Provider {
       id: json['id'],
       ruc: json['ruc'],
       name: json['name'],
-      address: json['address'],
       logo: json['logo'],
     );
   }
@@ -30,13 +27,12 @@ class Provider {
       'id': id,
       'ruc': ruc,
       'name': name,
-      'address': address,
       'logo': logo,
     };
   }
 
   @override
   String toString() {
-    return 'Provider(id: $id, ruc: $ruc, name: $name, address: $address, logo: $logo)';
+    return 'Provider(id: $id, ruc: $ruc, name: $name, logo: $logo)';
   }
 }

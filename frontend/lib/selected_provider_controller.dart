@@ -7,7 +7,6 @@ class SelectedProviderController extends GetxController {
     id: 1,
     ruc: '20123456789',
     name: 'Proveedor Alpha SAC',
-    address: 'Av. Perú 123',
     logo: 'alpha_logo.png',
   ).obs;
 
@@ -22,7 +21,6 @@ class SelectedProviderController extends GetxController {
       id: 1,
       ruc: '20123456789',
       name: 'Proveedor Alpha SAC',
-      address: 'Av. Perú 123',
       logo: 'alpha_logo.png',
     );
   }

@@ -2,14 +2,12 @@ class Isp {
   final int? id;
   final String ruc;
   final String name;
-  final String address;
 
 
   Isp({
     this.id,
     required this.ruc,
     required this.name,
-    required this.address,
   });
 
 
@@ -18,7 +16,6 @@ class Isp {
       id: json['id'],
       ruc: json['ruc'],
       name: json['name'],
-      address: json['address'],
     );
   }
 
@@ -28,13 +25,12 @@ class Isp {
       'id': id,
       'ruc': ruc,
       'name': name,
-      'address': address,
     };
   }
 
   @override
   String toString() {
-    return 'Isp(id: $id, ruc: $ruc, name: $name, address: $address)';
+    return 'Isp(id: $id, ruc: $ruc, name: $name)';
   }
 }
 

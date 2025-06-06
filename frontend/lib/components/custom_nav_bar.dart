@@ -13,7 +13,7 @@ class CustomNavBar extends StatelessWidget {
       '/financial-statement',
       '/view-companies',
       '/invoices',
-      '/add-service',
+      '/addService',
     ];
 
     if (index != selectedIndex) {

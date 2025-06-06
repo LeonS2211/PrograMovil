@@ -153,26 +153,28 @@ Widget _botton(BuildContext context) {
             height: 60,
           ),
 
-          DropdownButtonFormField<String>(
-            decoration: InputDecoration(
-              labelText: 'Dependencia',
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              filled: true,
-              fillColor: const Color.fromARGB(255, 211, 210, 210),
-            ),
-            items: [
-              DropdownMenuItem(value: 'opcion1', child: Text('Opción 1')),
-              DropdownMenuItem(value: 'opcion2', child: Text('Opción 2')),
-              DropdownMenuItem(value: 'opcion3', child: Text('Opción 3')),
-            ],
-            onChanged: (String? nuevoValor) {
-              // Aquí manejas el cambio de selección
-              print('Seleccionaste: $nuevoValor');
-            },
-            value: null, // Puedes asignar un valor inicial si quieres
-          ),
+Obx(() => DropdownButtonFormField<int>(
+      decoration: InputDecoration(
+        labelText: 'Dependencia',
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        filled: true,
+        fillColor: const Color.fromARGB(255, 211, 210, 210),
+      ),
+      items: control.ispList.map((isp) {
+        return DropdownMenuItem<int>(
+          value: isp.id,
+          child: Text(isp.name),
+        );
+      }).toList(),
+      onChanged: (int? nuevoValor) {
+        control.selectedIspId.value = nuevoValor;
+        print('Seleccionaste: $nuevoValor');
+      },
+      value: control.selectedIspId.value,
+    )),
+
 
                     SizedBox(
             height: 60,
@@ -402,26 +404,28 @@ Widget _botton2(BuildContext context) {
             height: 30,
           ),
 
-          DropdownButtonFormField<String>(
-            decoration: InputDecoration(
-              labelText: 'ISP',
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              filled: true,
-              fillColor: const Color.fromARGB(255, 211, 210, 210),
-            ),
-            items: [
-              DropdownMenuItem(value: 'opcion1', child: Text('Opción 1')),
-              DropdownMenuItem(value: 'opcion2', child: Text('Opción 2')),
-              DropdownMenuItem(value: 'opcion3', child: Text('Opción 3')),
-            ],
-            onChanged: (String? nuevoValor) {
-              // Aquí manejas el cambio de selección
-              print('Seleccionaste: $nuevoValor');
-            },
-            value: null, // Puedes asignar un valor inicial si quieres
-          ),
+Obx(() => DropdownButtonFormField<int>(
+      decoration: InputDecoration(
+        labelText: 'Dependencia',
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        filled: true,
+        fillColor: const Color.fromARGB(255, 211, 210, 210),
+      ),
+      items: control.ispList.map((isp) {
+        return DropdownMenuItem<int>(
+          value: isp.id,
+          child: Text(isp.name),
+        );
+      }).toList(),
+      onChanged: (int? nuevoValor) {
+        control.selectedIspId.value = nuevoValor;
+        print('Seleccionaste: $nuevoValor');
+      },
+      value: control.selectedIspId.value,
+    )),
+
 
 
                     SizedBox(

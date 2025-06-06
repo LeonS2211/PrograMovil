@@ -42,5 +42,7 @@ class IspService {
     return 'IspService(id: $id, ispId: $ispId, providerId: $providerId, '
            'description: $description, cost: $cost, payCode: $payCode)';
   }
+
+  fetchAll() {}
 }
 

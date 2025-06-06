@@ -8,6 +8,14 @@ environment:
   sdk: ^3.0.0
 
 dependencies:
+  collection: ^1.17.0
+  pdf: ^3.10.4
+  share_plus: ^7.2.1
+  open_file: ^3.3.2
+  excel: ^2.1.0
+  path_provider: ^2.1.1
+  printing: ^5.12.0
+  font_awesome_flutter: ^10.5.0
   flutter:
     sdk: flutter
   google_fonts: ^6.1.0
@@ -21,6 +29,11 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
+    - assets/images/pdf.png
+    - assets/images/excel.png
+    - assets/images/logo_proveedify.png
+    - assets/jsons/
+    - assets/fonts/roboto.ttf
     - assets/images/ISP.png
     - assets/images/Propio.png.
     - assets/jsons/

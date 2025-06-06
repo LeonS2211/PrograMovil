@@ -8,6 +8,7 @@ environment:
   sdk: ^3.0.0
 
 dependencies:
+  collection: ^1.17.0
   pdf: ^3.10.4
   share_plus: ^7.2.1
   open_file: ^3.3.2

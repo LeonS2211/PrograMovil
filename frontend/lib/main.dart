@@ -10,44 +10,57 @@ import 'package:helloworld/pages/view_companies/view_companies_page.dart';
 import 'package:helloworld/pages/view_contacts/view_contacts_page.dart';
 import 'package:helloworld/pages/view_dependencies/view_dependencies_page.dart';
 import 'package:helloworld/selected_provider_controller.dart';
+import 'package:helloworld/services/contact_service.dart';
 import './pages/sign_in/sign_in_page.dart';
 import 'package:get/get.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize controllers and services
   Get.put(SelectedProviderController()); // controlador global
+  Get.put(ContactService()); // servicio de contactos
+  
   runApp(MyApp());
 }
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-  // This widget is the root of your application.
+
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme =
         createTextTheme(context, 'Abril Fatface', 'Allerta');
     final MaterialTheme materialTheme = MaterialTheme(textTheme);
 
-    return MaterialApp(
-        title: 'Flutter Hello World',
-        theme: materialTheme.light(),
-        darkTheme: materialTheme.dark(),
-        themeMode: ThemeMode.system,
-        initialRoute: '/register-service',
-        routes: {
-          
-          '/sign-in': (context) => SignInPage(),
-          '/select-company': (context) => SelectCompanyPage(),
-          '/financial-statement': (context) => FinancialStatementPage(),
-          '/invoices': (context) => InvoicesPage(),
-          '/add-service': (context) => AddServicePage(),
-          '/register-service': (context) => RegisterServicePage(),
-          '/registerService': (context) => RegisterServicePage(),
-          '/addService' : (context) => AddServicePage(),
-          '/view-companies': (context) => ViewCompaniesPage(),
-          '/view-dependencies': (context) => ViewDependenciesPage(),
-          '/view-contacts': (context) => ViewContactsPage(),
-  });
+    return GetMaterialApp(  // Changed from MaterialApp to GetMaterialApp
+      title: 'Flutter Hello World',
+      theme: materialTheme.light(),
+      darkTheme: materialTheme.dark(),
+      themeMode: ThemeMode.system,
+      initialRoute: '/financial-statement',
+      routes: {
+        '/sign-in': (context) => SignInPage(),
+        '/select-company': (context) => SelectCompanyPage(),
+        '/financial-statement': (context) => FinancialStatementPage(),
+        '/invoices': (context) => InvoicesPage(),
+        '/add-service': (context) => AddServicePage(),
+        '/register-service': (context) => RegisterServicePage(),
+        '/view-companies': (context) => ViewCompaniesPage(),
+        '/view-contacts': (context) {
+          final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+          return ViewContactsPage(
+            dependency: args['dependency'],
+          );
+        },
+        '/view-dependencies': (context) {
+          final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+          return ViewDependenciesPage(
+            companyId: args['companyId']!,
+            companyName: args['companyName'] ?? 'Empresa',
+          );
+        },
+      },
+    );
   }
 }
-
-
-

@@ -84,7 +84,7 @@ class FinancialStatementPage extends StatelessWidget {
                 );
               }),
             ),
-            // Botón EXPORTAR y COMPARTIR
+            // Botón EXPORTAR / COMPARTIR
             Center(
               child: ElevatedButton(
                 onPressed: () => showExportDialog(context),

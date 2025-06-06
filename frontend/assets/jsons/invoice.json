@@ -23,7 +23,7 @@
     "id": 3,
     "invoice_number": "E001-000587",
     "service_type": "Proveedor",
-    "service_id": 10,
+    "service_id": 2,
     "invoice_month": 3,
     "invoiced": true,
     "issue_date": "2025-04-01T00:00:00.000Z",

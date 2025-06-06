@@ -53,6 +53,7 @@ class FinancialStatementPage extends StatelessWidget {
                         () => _showIngresosFilterDialog(context),
                         colorScheme,
                         textTheme,
+                        isIngresos: true,
                       ),
                       const SizedBox(height: 10),
                       _buildIngresosTable(colorScheme, textTheme),
@@ -68,18 +69,22 @@ class FinancialStatementPage extends StatelessWidget {
                         () => _showEgresosFilterDialog(context),
                         colorScheme,
                         textTheme,
+                        isIngresos: false,
                       ),
                       const SizedBox(height: 10),
                       _buildEgresosTable(colorScheme, textTheme),
                       const SizedBox(height: 20),
                       // Sección Resumen
                       _buildSummaryCard(colorScheme, textTheme),
+                      const SizedBox(height: 20),
+                      // Botón "Limpiar todos los filtros"
+                      _buildClearAllFiltersButton(colorScheme, textTheme),
                     ],
                   ),
                 );
               }),
             ),
-            // Botón EXPORTAR y COMPARTIR
+            // Botón EXPORTAR / COMPARTIR
             Center(
               child: ElevatedButton(
                 onPressed: () => showExportDialog(context),
@@ -105,31 +110,117 @@ class FinancialStatementPage extends StatelessWidget {
     );
   }
 
-  Widget _buildFilterButton(
-    BuildContext context,
-    String text,
-    IconData icon,
-    VoidCallback onPressed,
-    ColorScheme colorScheme,
-    TextTheme textTheme,
-  ) {
-    return Align(
-      alignment: Alignment.centerRight,
-      child: ElevatedButton.icon(
-        onPressed: onPressed,
-        icon: Icon(icon, size: 18),
-        label: Text(text),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: colorScheme.primaryContainer,
-          foregroundColor: colorScheme.onPrimaryContainer,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          textStyle: textTheme.labelMedium?.copyWith(
-            fontWeight: FontWeight.bold,
+  Widget _buildClearAllFiltersButton(
+      ColorScheme colorScheme, TextTheme textTheme) {
+    return Obx(() {
+      final hayFiltros =
+          control.hayFiltrosIngresosActivos || control.hayFiltrosEgresosActivos;
+
+      if (!hayFiltros) return const SizedBox.shrink();
+
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          child: ElevatedButton.icon(
+            onPressed: () {
+              control.limpiarFiltrosIngresos();
+              control.limpiarFiltrosEgresos();
+            },
+            icon: const Icon(Icons.clear_all),
+            label: const Text('Limpiar todos los filtros'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: colorScheme.errorContainer,
+              foregroundColor: colorScheme.onErrorContainer,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            ),
           ),
         ),
+      );
+    });
+  }
+
+  Widget _buildFilterButton(BuildContext context, String text, IconData icon,
+      VoidCallback onPressed, ColorScheme colorScheme, TextTheme textTheme,
+      {bool isIngresos = true}) {
+    return Align(
+      alignment: Alignment.centerRight,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          ElevatedButton.icon(
+            onPressed: onPressed,
+            icon: Icon(icon, size: 18),
+            label: Text(text),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: colorScheme.primaryContainer,
+              foregroundColor: colorScheme.onPrimaryContainer,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              textStyle: textTheme.labelMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          // Indicador de filtros activos
+          Obx(() {
+            final hayFiltros = isIngresos
+                ? control.hayFiltrosIngresosActivos
+                : control.hayFiltrosEgresosActivos;
+
+            if (!hayFiltros) return const SizedBox.shrink();
+
+            final resumen = isIngresos
+                ? control.resumenFiltrosIngresos
+                : control.resumenFiltrosEgresos;
+
+            return Container(
+              margin: const EdgeInsets.only(top: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: BoxDecoration(
+                color: colorScheme.primary.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: colorScheme.primary.withOpacity(0.3),
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.filter_list,
+                    size: 12,
+                    color: colorScheme.primary,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    resumen,
+                    style: textTheme.labelSmall?.copyWith(
+                      color: colorScheme.primary,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  GestureDetector(
+                    onTap: () {
+                      if (isIngresos) {
+                        control.limpiarFiltrosIngresos();
+                      } else {
+                        control.limpiarFiltrosEgresos();
+                      }
+                    },
+                    child: Icon(
+                      Icons.close,
+                      size: 12,
+                      color: colorScheme.primary,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }),
+        ],
       ),
     );
   }
@@ -1291,17 +1382,18 @@ class FinancialStatementPage extends StatelessWidget {
     double montoMin,
     double montoMax,
   ) {
-    print('=== FILTROS DE INGRESOS APLICADOS ===');
-    print('Nombre: $nombreEnabled - "$nombreText"');
-    print('RUC: $rucEnabled - "$rucText"');
-    print('Dependencia: $dependenciaEnabled - "$dependenciaText"');
-    print('Fecha Inicio: $fechaInicio');
-    print('Fecha Fin: $fechaFin');
-    print('Monto Min: $montoMin');
-    print('Monto Max: $montoMax');
-
-    // Aquí implementarías la lógica de filtrado para INGRESOS
-    // control.filterIngresos(...);
+    control.aplicarFiltrosIngresos(
+      nombreEnabled: nombreEnabled,
+      nombreText: nombreText,
+      rucEnabled: rucEnabled,
+      rucText: rucText,
+      dependenciaEnabled: dependenciaEnabled,
+      dependenciaText: dependenciaText,
+      fechaInicio: fechaInicio,
+      fechaFin: fechaFin,
+      montoMin: montoMin,
+      montoMax: montoMax,
+    );
   }
 
   void _applyEgresosFilters(
@@ -1316,17 +1408,18 @@ class FinancialStatementPage extends StatelessWidget {
     double montoMin,
     double montoMax,
   ) {
-    print('=== FILTROS DE EGRESOS APLICADOS ===');
-    print('Nombre: $nombreEnabled - "$nombreText"');
-    print('RUC: $rucEnabled - "$rucText"');
-    print('ISP: $ispEnabled - "$ispText"');
-    print('Fecha Inicio: $fechaInicio');
-    print('Fecha Fin: $fechaFin');
-    print('Monto Min: $montoMin');
-    print('Monto Max: $montoMax');
-
-    // Aquí implementarías la lógica de filtrado para EGRESOS
-    // control.filterEgresos(...);
+    control.aplicarFiltrosEgresos(
+      nombreEnabled: nombreEnabled,
+      nombreText: nombreText,
+      rucEnabled: rucEnabled,
+      rucText: rucText,
+      ispEnabled: ispEnabled,
+      ispText: ispText,
+      fechaInicio: fechaInicio,
+      fechaFin: fechaFin,
+      montoMin: montoMin,
+      montoMax: montoMax,
+    );
   }
 
   void showExportDialog(BuildContext context) {

@@ -5,6 +5,7 @@ import 'package:helloworld/pages/register_service/register_service_page.dart';
 import 'add_service_controller.dart';
 import '../../components/custom_nav_bar.dart';
 import 'package:get/get.dart';
+import 'package:flutter/services.dart';
 
 
 
@@ -66,7 +67,7 @@ Widget _botton(BuildContext context) {
                       return AlertDialog(
                         backgroundColor: const Color.fromARGB(255, 240, 161, 225),
                         title: Text(
-                          'Información registrada \n correctamente?',
+                          'Información registrada \n correctamente',
                           textAlign: TextAlign.center,
                         ),
                         actionsAlignment: MainAxisAlignment.center,
@@ -149,8 +150,37 @@ Widget _botton(BuildContext context) {
             height: 60,
           ),
 
+          DropdownButtonFormField<String>(
+            decoration: InputDecoration(
+              labelText: 'Dependencia',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              filled: true,
+              fillColor: const Color.fromARGB(255, 211, 210, 210),
+            ),
+            items: [
+              DropdownMenuItem(value: 'opcion1', child: Text('Opción 1')),
+              DropdownMenuItem(value: 'opcion2', child: Text('Opción 2')),
+              DropdownMenuItem(value: 'opcion3', child: Text('Opción 3')),
+            ],
+            onChanged: (String? nuevoValor) {
+              // Aquí manejas el cambio de selección
+              print('Seleccionaste: $nuevoValor');
+            },
+            value: null, // Puedes asignar un valor inicial si quieres
+          ),
+
+                    SizedBox(
+            height: 60,
+          ),
+
+
+
           TextField(
             controller: precio,
+            keyboardType: TextInputType.number,
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             decoration: InputDecoration(
               labelText: 'Precio',
               border: OutlineInputBorder(
@@ -160,6 +190,7 @@ Widget _botton(BuildContext context) {
               fillColor: const Color.fromARGB(255, 212, 210, 210),
             ),
           ),
+
 
           
           SizedBox(
@@ -280,7 +311,7 @@ Widget _botton2(BuildContext context) {
                       return AlertDialog(
                         backgroundColor: const Color.fromARGB(255, 240, 161, 225),
                         title: Text(
-                          'Información registrada \n correctamente?',
+                          'Información registrada \n correctamente',
                           textAlign: TextAlign.center,
                         ),
                         actionsAlignment: MainAxisAlignment.center,
@@ -395,7 +426,8 @@ Widget _botton2(BuildContext context) {
 
           TextField(
             controller: precioController,
-
+            keyboardType: TextInputType.number,
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             decoration: InputDecoration(
               labelText: 'Costo',
               border: OutlineInputBorder(
@@ -412,6 +444,8 @@ Widget _botton2(BuildContext context) {
 
           TextField(
             controller: codigoPago,
+            keyboardType: TextInputType.number,
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             decoration: InputDecoration(
               labelText: 'Codigo de pago',
               border: OutlineInputBorder(

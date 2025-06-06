@@ -1,33 +1,51 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class SignInController extends GetxController {
-  final TextEditingController userController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+import '../../services/admin_service.dart';
+import '../../models/entities/admin.dart';
 
-  var isPasswordHidden = true.obs;
+class SignInController extends GetxController {
+  final userController = TextEditingController();
+  final passwordController = TextEditingController();
+  final isPasswordHidden = true.obs;
+
+  final AdminService _adminService = AdminService();
 
   void togglePasswordVisibility() {
     isPasswordHidden.value = !isPasswordHidden.value;
   }
 
-  // Ahora solo valida y devuelve mensaje de error o null si está OK
-  String? validateLogin() {
-    final user = userController.text.trim();
+  Future<void> login(BuildContext context) async {
+    final username = userController.text.trim();
     final password = passwordController.text.trim();
 
-    if (user.isEmpty || password.isEmpty) {
-      return 'Por favor ingrese usuario y contraseña';
+    if (username.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Por favor complete todos los campos')),
+      );
+      return;
     }
-    // Aquí puedes agregar más validaciones o lógica de login real
 
-    return null;
-  }
+    final response = await _adminService.signIn(Admin(
+      id: 0, // No se usa para el login
+      username: username,
+      password: password,
+    ));
 
-  @override
-  void onClose() {
-    userController.dispose();
-    passwordController.dispose();
-    super.onClose();
+    if (response?.status == 200 && response!.body != null) {
+      final List<int> providerIds = List<int>.from(response.body.listProvider);
+
+      Navigator.pushNamed(
+        context,
+        '/select-company',
+        arguments: {
+          'providerIds': providerIds,
+        },
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Credenciales incorrectas')),
+      );
+    }
   }
 }

@@ -13,12 +13,10 @@ import 'package:helloworld/selected_provider_controller.dart';
 import './pages/sign_in/sign_in_page.dart';
 import 'package:get/get.dart';
 
-
 void main() {
   Get.put(SelectedProviderController()); // controlador global
   runApp(MyApp());
 }
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
   // This widget is the root of your application.
@@ -43,7 +41,7 @@ class MyApp extends StatelessWidget {
           '/register-service': (context) => RegisterServicePage(),
           '/view-companies': (context) => ViewCompaniesPage(),
           '/view-dependencies': (context) => ViewDependenciesPage(),
-          '/view-contacts': (context) => ViewContactsPage(),         
-        });
+          '/view-contacts': (context) => ViewContactsPage(),
+  });
   }
 }

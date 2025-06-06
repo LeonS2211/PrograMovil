@@ -8,6 +8,7 @@ environment:
   sdk: ^3.0.0
 
 dependencies:
+  collection: ^1.17.0
   pdf: ^3.10.4
   share_plus: ^7.2.1
   open_file: ^3.3.2
@@ -33,6 +34,17 @@ flutter:
     - assets/images/logo_proveedify.png
     - assets/jsons/
     - assets/fonts/roboto.ttf
+    - assets/images/ISP.png
+    - assets/images/Propio.png.
+    - assets/jsons/
+
+fonts:
+  - family: Montserrat
+    fonts:
+      - asset: assets/fonts/Montserrat-Regular.ttf
+      - asset: assets/fonts/Montserrat-Bold.ttf
+        weight: 700
+
   #  - images/a_dot_ham.jpeg
   # fonts:
   #   - family: Schyler

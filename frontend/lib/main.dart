@@ -45,8 +45,9 @@ class MyApp extends StatelessWidget {
           '/view-companies': (context) => ViewCompaniesPage(),
           '/view-dependencies': (context) => ViewDependenciesPage(),
           '/view-contacts': (context) => ViewContactsPage(),
-        });
+  });
   }
 }
+
 
 

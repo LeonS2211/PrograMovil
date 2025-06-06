@@ -33,17 +33,18 @@ class MyApp extends StatelessWidget {
         themeMode: ThemeMode.system,
         initialRoute: '/register-service',
         routes: {
-          //'/sign-in': (context) => SignInPage(),
-          //'/select-company': (context) => SelectCompanyPage(),
-          //'/financial-statement': (context) => FinancialStatementPage(),
-          //'/invoices': (context) => InvoicesPage(),
+          
+          '/sign-in': (context) => SignInPage(),
+          '/select-company': (context) => SelectCompanyPage(),
+          '/financial-statement': (context) => FinancialStatementPage(),
+          '/invoices': (context) => InvoicesPage(),
           '/add-service': (context) => AddServicePage(),
           '/register-service': (context) => RegisterServicePage(),
           '/registerService': (context) => RegisterServicePage(),
           '/addService' : (context) => AddServicePage(),
-          //'/view-companies': (context) => ViewCompaniesPage(),
-          //'/view-dependencies': (context) => ViewDependenciesPage(),
-          //'/view-contacts': (context) => ViewContactsPage(),
+          '/view-companies': (context) => ViewCompaniesPage(),
+          '/view-dependencies': (context) => ViewDependenciesPage(),
+          '/view-contacts': (context) => ViewContactsPage(),
         });
   }
 }

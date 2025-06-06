@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:helloworld/pages/register_service/register_service_controller.dart';
 import 'package:helloworld/pages/register_service/register_service_page.dart';
+import 'package:helloworld/selected_provider_controller.dart';
 import 'add_service_controller.dart';
 import '../../components/custom_nav_bar.dart';
 import 'package:get/get.dart';
@@ -19,6 +20,7 @@ final TextEditingController precio = TextEditingController();
 class AddServicePage extends StatelessWidget {
   AddServiceController control = Get.put(AddServiceController());
   bool isp = false;
+  final proveedor = Get.find<SelectedProviderController>().provider;
 
   RegisterServiceController controlBack = Get.put(RegisterServiceController());
   
@@ -45,6 +47,7 @@ Widget _botton(BuildContext context) {
                     actions: [
                       TextButton(
                         onPressed: () {
+                          control.guardarNuevoProviderService(context, proveedor.id!, 2);
                           Navigator.of(context).pop(true); // Cierra primer modal y devuelve true
                         },
                         child: Text('Confirmar'),
@@ -118,7 +121,7 @@ Widget _botton(BuildContext context) {
   Widget _Registro(BuildContext context) {
     return Container(
       height: 450,
-      padding: EdgeInsets.only(top: 125 ),
+      padding: EdgeInsets.only(top: 90 ),
       decoration: BoxDecoration( 
         border: Border(
           top: BorderSide(
@@ -289,6 +292,7 @@ Widget _botton2(BuildContext context) {
                     actions: [
                       TextButton(
                         onPressed: () {
+                          control.guardarNuevoServicio(context, proveedor.id!);
                           Navigator.of(context).pop(true); // Cierra primer modal y devuelve true
                         },
                         child: Text('Confirmar'),

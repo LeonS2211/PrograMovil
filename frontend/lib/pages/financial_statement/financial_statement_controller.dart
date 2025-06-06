@@ -1,4 +1,3 @@
-import 'package:collection/collection.dart';
 import 'package:get/get.dart';
 import 'dart:io';
 import 'package:flutter/services.dart';
@@ -18,7 +17,6 @@ import '../../models/entities/provider_service.dart';
 import '../../models/entities/isp_service.dart';
 import '../../models/entities/invoice.dart';
 import '../../models/entities/dependency.dart';
-import '../../models/entities/company.dart';
 import '../../models/entities/isp.dart';
 import '../../selected_provider_controller.dart';
 /*

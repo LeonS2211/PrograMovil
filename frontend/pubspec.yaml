@@ -32,11 +32,11 @@ flutter:
     - assets/images/pdf.png
     - assets/images/excel.png
     - assets/images/logo_proveedify.png
+    - assets/images/LogoProveedify.png
     - assets/jsons/
     - assets/fonts/roboto.ttf
     - assets/images/ISP.png
     - assets/images/Propio.png.
-    - assets/jsons/
 
 fonts:
   - family: Montserrat

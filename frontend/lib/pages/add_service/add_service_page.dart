@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:helloworld/pages/register_service/register_service_controller.dart';
-import 'package:helloworld/pages/register_service/register_service_page.dart';
 import 'package:helloworld/selected_provider_controller.dart';
 import 'add_service_controller.dart';
 import '../../components/custom_nav_bar.dart';
-import 'package:get/get.dart';
 import 'package:flutter/services.dart';
 
 
@@ -539,7 +537,7 @@ Obx(() => DropdownButtonFormField<int>(
       canPop: false,
       onPopInvokedWithResult: (bool didPop, Object? result) {
         if (!didPop) {
-          Navigator.pushReplacementNamed(context, '/select-company');
+          Navigator.pushReplacementNamed(context, '/sign-in');
         }
       },
       child: Scaffold(

@@ -20,6 +20,7 @@ dependencies:
     sdk: flutter
   google_fonts: ^6.1.0
   get: ^4.6.5
+  flutter_launcher_icons: "^0.13.1"
 
 dev_dependencies:
   flutter_test:
@@ -32,8 +33,24 @@ flutter:
     - assets/images/pdf.png
     - assets/images/excel.png
     - assets/images/logo_proveedify.png
+    - assets/images/LogoProveedify.png
     - assets/jsons/
     - assets/fonts/roboto.ttf
+    - assets/images/ISP.png
+    - assets/images/Propio.png.
+
+fonts:
+  - family: Montserrat
+    fonts:
+      - asset: assets/fonts/Montserrat-Regular.ttf
+      - asset: assets/fonts/Montserrat-Bold.ttf
+        weight: 700
+
+flutter_launcher_icons:
+  android: true
+  #ios: true
+  image_path: "assets/images/Icon.png"
+  min_sdk_android: 21
   #  - images/a_dot_ham.jpeg
   # fonts:
   #   - family: Schyler

@@ -56,4 +56,29 @@ class DependencyService {
       return serviceResponse;
     }
   }
+
+  Future<ServiceHttpResponse?> fetchAllNamesWithId() async {
+  ServiceHttpResponse serviceResponse = ServiceHttpResponse();
+
+  // Cargar el archivo JSON
+  final String lectura = await rootBundle.loadString('assets/jsons/provider.json');
+  final List<dynamic> data = jsonDecode(lectura);
+
+  // Convertir los datos JSON en una lista de objetos Provider
+  List<Provider> names = data.map((e) => Provider.fromJson(e)).toList();
+
+  // Crear una lista de mapas con los valores de id y name
+  List<Map<String, dynamic>> providerNamesWithId = names.map((provider) {
+    return {
+      'id': provider.id,  // Obtener el id
+      'name': provider.name  // Obtener el name
+    };
+  }).toList();
+
+  // Configurar la respuesta del servicio
+  serviceResponse.status = 200;
+  serviceResponse.body = providerNamesWithId;
+
+  return serviceResponse;
+}
 }

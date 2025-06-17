@@ -29,13 +29,28 @@ class IspService {
     }
   }
 
-  Future<ServiceHttpResponse?> fetchAllNames() async {
-    ServiceHttpResponse serviceResponse = ServiceHttpResponse();
-    final String lectura = await rootBundle.loadString('assets/jsons/isp.json');
-    final List<dynamic> data = jsonDecode(lectura);
-    List<Isp> names = data.map((e) => Isp.fromJson(e)).toList();
-    serviceResponse.status = 200;
-    serviceResponse.body = names.map((isp) => isp.name).toList();
-    return serviceResponse;
-  }
+Future<ServiceHttpResponse?> fetchAllNamesWithId() async {
+  ServiceHttpResponse serviceResponse = ServiceHttpResponse();
+
+  // Cargar el archivo JSON
+  final String lectura = await rootBundle.loadString('assets/jsons/isp.json');
+  final List<dynamic> data = jsonDecode(lectura);
+
+  // Convertir los datos JSON en una lista de objetos Isp
+  List<Isp> names = data.map((e) => Isp.fromJson(e)).toList();
+
+  // Crear una lista de mapas con los valores de id y name
+  List<Map<String, dynamic>> ispNamesWithId = names.map((isp) {
+    return {
+      'id': isp.id,  // Obtener el id
+      'name': isp.name  // Obtener el name
+    };
+  }).toList();
+
+  // Configurar la respuesta del servicio
+  serviceResponse.status = 200;
+  serviceResponse.body = ispNamesWithId;
+
+  return serviceResponse;
+}
 }

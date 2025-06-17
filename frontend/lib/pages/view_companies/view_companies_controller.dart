@@ -3,7 +3,6 @@ import '../../models/entities/company.dart';
 import '../../models/entities/address.dart';
 import '../../services/company_service.dart';
 import '../../services/address_service.dart';
-import '../../models/service_http_response.dart';
 
 class ViewCompaniesController extends GetxController {
   final CompanyService _companyService = CompanyService();

@@ -45,8 +45,8 @@ class SelectCompanyController extends GetxController {
         // Guardar en controlador global
         Get.find<SelectedProviderController>().setProvider(provider);
 
-        // Navegar a invoices
-        Navigator.pushReplacementNamed(context, '/invoices');
+        // Navegar a financial
+        Navigator.pushReplacementNamed(context, '/financial-statement');
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Proveedor no válido')),

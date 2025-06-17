@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../components/custom_nav_bar.dart';
-import '../../models/entities/dependency.dart';
 import 'package:helloworld/pages/view_dependencies/view_dependencies_controller.dart';
-import 'package:helloworld/pages/view_contacts/view_contacts_page.dart';
+
 
 class ViewDependenciesPage extends StatelessWidget {
   final String companyId;

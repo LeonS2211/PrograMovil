@@ -10,7 +10,7 @@ class ContactService {
     ServiceHttpResponse serviceResponse = ServiceHttpResponse();
 
     final String body =
-        await rootBundle.loadString('assets/jsons/contacts.json');
+        await rootBundle.loadString('assets/jsons/contact.json');
     final List<dynamic> data = jsonDecode(body);
 
     contacts = data

@@ -1,39 +1,54 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../../config/database');
-const Question = require('./question'); // Importamos el modelo Question
+const Provider = require('./provider');
+const Dependency = require('./dependency'); 
 
-const Alternative = sequelize.define('Alternative', {
+const ProviderService = sequelize.define('ProviderService', {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
         allowNull: false
     },
-    statement: {
-        type: DataTypes.STRING(255),
-        allowNull: false
-    },
-    correct: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false
-    },
-    question_id: {
+    dependency_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: Question,
+            model: Dependency,
             key: 'id'
         }
+    },
+    provider_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: Provider,
+            key: 'id'
+        }
+    },
+    description: {
+        type: DataTypes.STRING(255),
+        allowNull: false
+    },
+    price: {
+        type: DataTypes.FLOAT,
+        allowNull: false
     }
 }, {
-    tableName: 'alternatives',
+    tableName: 'provider_services',
     timestamps: false
 });
 
-// Definimos la relación con Question
-Alternative.belongsTo(Question, {
-    foreignKey: 'question_id',
-    as: 'question' // Alias opcional para usar en consultas
+// Definimos la relación con Provider
+ProviderService.belongsTo(Provider, {
+    foreignKey: 'provider_id',
+    as: 'provider' // Alias opcional para usar en consultas
 });
 
-module.exports = Alternative;
+// Relación opcional si quieres asociar con Dependency
+ProviderService.belongsTo(Dependency, {
+    foreignKey: 'dependency_id',
+    as: 'dependency' // Alias opcional para usar en consultas
+});
+
+module.exports = ProviderService;

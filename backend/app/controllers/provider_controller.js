@@ -1,5 +1,5 @@
 const express = require("express");
-const User = require("../models/user");
+//const User = require("../models/user");
 const sequelize = require("../../config/database");
 const { jwtMiddleware } = require("../../config/middlewares");
 const router = express.Router();

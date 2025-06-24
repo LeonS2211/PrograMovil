@@ -29,6 +29,14 @@ const IspService = sequelize.define('IspService', {
             model: ISP,
             key: 'id'
         }
+    },
+    cost: {
+        type: DataTypes.FLOAT,
+        allowNull: false
+    },
+    pay_code: {
+        type: DataTypes.STRING(30),
+        allowNull: false
     }
 }, {
     tableName: 'isp_services',

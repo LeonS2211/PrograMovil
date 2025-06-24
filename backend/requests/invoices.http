@@ -1,37 +1,101 @@
 @baseUrl = http://localhost:3000
 @session = mysession=MTc0OTMyNjc1M3xEWDhFQVFMX2dBQUJFQUVRQUFBb180QUFBUVp6ZEhKcGJtY01DQUFHYzNSaGRIVnpCbk4wY21sdVp3d0tBQWhoWTNScGRtRjBaUT09fDEwMNRr-eTvIKdIDTSfFrm61NAAZ06WflPGf2t7gHIC
 
-### Login
-POST {{baseUrl}}/apis/v1/users/sign-in
+### Obtener facturas de ISP (Status 200)
+POST {{baseUrl}}/invoices/isp
 Content-Type: application/json
 Cookie: {{session}}
 
 {
-  "username": "juanperez",
-  "password": "123"
+  "ispServices": [
+    { "id": 1 },
+    { "id": 3 }
+  ]
 }
 
-### solicitud de nueva contraseña
-POST {{baseUrl}}/apis/v1/users/reset-password
+### Obtener facturas de ISP (Status 400)
+POST {{baseUrl}}/invoices/isp
 Content-Type: application/json
 Cookie: {{session}}
 
 {
-  "email": "juan@example.com"
+  "ispServices": []
 }
 
-### solicitud de nueva contraseña
-GET {{baseUrl}}/apis/v1/users/record?user_id=2
+### Obtener facturas de ISP (Status 404)
+POST {{baseUrl}}/invoices/isp
 Content-Type: application/json
 Cookie: {{session}}
 
+{
+  "ispServices": [
+    { "id": 999 },
+    { "id": 1000 }
+  ]
+}
 
+### Obtener facturas de Proveedor (Status 200)
+POST {{baseUrl}}/invoices/provider
+Content-Type: application/json
+Cookie: {{session}}
 
-### listar topics
-GET {{baseUrl}}/apis/v1/topics
+{
+  "providerServices": [
+    { "id": 2 },
+    { "id": 4 }
+  ]
+}
 
-### traer topic por id
-GET {{baseUrl}}/apis/v1/topics/1
+### Obtener facturas de Proveedor (Status 400)
+POST {{baseUrl}}/invoices/provider
+Content-Type: application/json
+Cookie: {{session}}
 
-### traer topic por id - 404
-GET {{baseUrl}}/apis/v1/topics/11
+{
+  "providerServices": []
+}
+
+### Obtener facturas de Proveedor (Status 404)
+POST {{baseUrl}}/invoices/provider
+Content-Type: application/json
+Cookie: {{session}}
+
+{
+  "providerServices": [
+    { "id": 999 },
+    { "id": 1000 }
+  ]
+}
+
+### Marcar una factura como facturada (Status 200)
+POST {{baseUrl}}/invoices/invoice
+Content-Type: application/json
+Cookie: {{session}}
+
+{
+  "invoice": {
+    "id": 1
+  }
+}
+
+### Marcar una factura como facturada (Status 404)
+POST {{baseUrl}}/invoices/invoice
+Content-Type: application/json
+Cookie: {{session}}
+
+{
+  "invoice": {
+    "id": 999
+  }
+}
+
+### Marcar una factura como facturada (Status 500)
+POST {{baseUrl}}/invoices/invoice
+Content-Type: application/json
+Cookie: {{session}}
+
+{
+  "invoice": {
+    "id": 1
+  }
+}

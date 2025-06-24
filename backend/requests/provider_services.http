@@ -1,37 +1,53 @@
 @baseUrl = http://localhost:3000
 @session = mysession=MTc0OTMyNjc1M3xEWDhFQVFMX2dBQUJFQUVRQUFBb180QUFBUVp6ZEhKcGJtY01DQUFHYzNSaGRIVnpCbk4wY21sdVp3d0tBQWhoWTNScGRtRjBaUT09fDEwMNRr-eTvIKdIDTSfFrm61NAAZ06WflPGf2t7gHIC
 
-### Login
-POST {{baseUrl}}/apis/v1/users/sign-in
+### Obtener servicios por proveedor (Status 200)
+POST {{baseUrl}}/apis/v1/provider-services/by-provider
 Content-Type: application/json
 Cookie: {{session}}
 
 {
-  "username": "juanperez",
-  "password": "123"
+  "providerId": 1
 }
 
-### solicitud de nueva contraseña
-POST {{baseUrl}}/apis/v1/users/reset-password
+### Obtener servicios por proveedor (Status 404) - No se encuentran servicios
+POST {{baseUrl}}/apis/v1/provider-services/by-provider
 Content-Type: application/json
 Cookie: {{session}}
 
 {
-  "email": "juan@example.com"
+  "providerId": 999
 }
 
-### solicitud de nueva contraseña
-GET {{baseUrl}}/apis/v1/users/record?user_id=2
+### Crear un nuevo servicio (Status 201)
+POST {{baseUrl}}/apis/v1/provider-services/create
 Content-Type: application/json
 Cookie: {{session}}
 
+{
+  "description": "Nuevo servicio de soporte técnico",
+  "providerId": 1,
+  "price": 150.00
+}
 
+### Crear un servicio que ya existe (Status 409)
+POST {{baseUrl}}/apis/v1/provider-services/create
+Content-Type: application/json
+Cookie: {{session}}
 
-### listar topics
-GET {{baseUrl}}/apis/v1/topics
+{
+  "description": "Nuevo servicio de soporte técnico",
+  "providerId": 1,
+  "price": 150.00
+}
 
-### traer topic por id
-GET {{baseUrl}}/apis/v1/topics/1
+### Crear un nuevo servicio (Status 500) - Error en la creación
+POST {{baseUrl}}/apis/v1/provider-services/create
+Content-Type: application/json
+Cookie: {{session}}
 
-### traer topic por id - 404
-GET {{baseUrl}}/apis/v1/topics/11
+{
+  "description": "Servicio de mantenimiento en línea",
+  "providerId": 1,
+  "price": "abc"  // Simulamos un error al pasar un valor no numérico para el precio
+}

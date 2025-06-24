@@ -1,37 +1,36 @@
 @baseUrl = http://localhost:3000
 @session = mysession=MTc0OTMyNjc1M3xEWDhFQVFMX2dBQUJFQUVRQUFBb180QUFBUVp6ZEhKcGJtY01DQUFHYzNSaGRIVnpCbk4wY21sdVp3d0tBQWhoWTNScGRtRjBaUT09fDEwMNRr-eTvIKdIDTSfFrm61NAAZ06WflPGf2t7gHIC
 
-### Login
-POST {{baseUrl}}/apis/v1/users/sign-in
+### Listar todos los ISP
+GET {{baseUrl}}/apis/v1/isps
+Content-Type: application/json
+Cookie: {{session}}
+
+### Traer ISP por id
+GET {{baseUrl}}/apis/v1/isps/1
+Content-Type: application/json
+Cookie: {{session}}
+
+### Traer ISP por id - 404 esperado
+GET {{baseUrl}}/apis/v1/isps/999
+Content-Type: application/json
+Cookie: {{session}}
+
+### Crear un nuevo ISP
+POST {{baseUrl}}/apis/v1/isps
 Content-Type: application/json
 Cookie: {{session}}
 
 {
-  "username": "juanperez",
-  "password": "123"
+  "name": "Nuevo ISP Ejemplo"
 }
 
-### solicitud de nueva contraseña
-POST {{baseUrl}}/apis/v1/users/reset-password
+### Crear ISP con datos incompletos (para probar error 400)
+POST {{baseUrl}}/apis/v1/isps
 Content-Type: application/json
 Cookie: {{session}}
 
 {
-  "email": "juan@example.com"
+  "nombre_incorrecto": "Sin campo name"
 }
 
-### solicitud de nueva contraseña
-GET {{baseUrl}}/apis/v1/users/record?user_id=2
-Content-Type: application/json
-Cookie: {{session}}
-
-
-
-### listar topics
-GET {{baseUrl}}/apis/v1/topics
-
-### traer topic por id
-GET {{baseUrl}}/apis/v1/topics/1
-
-### traer topic por id - 404
-GET {{baseUrl}}/apis/v1/topics/11

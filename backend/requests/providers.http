@@ -1,8 +1,7 @@
 @baseUrl = http://localhost:3000
 @session = mysession=MTc0OTMyNjc1M3xEWDhFQVFMX2dBQUJFQUVRQUFBb180QUFBUVp6ZEhKcGJtY01DQUFHYzNSaGRIVnpCbk4wY21sdVp3d0tBQWhoWTNScGRtRjBaUT09fDEwMNRr-eTvIKdIDTSfFrm61NAAZ06WflPGf2t7gHIC
-
-### Login
-POST {{baseUrl}}/apis/v1/users/sign-in
+### Login del Administrador (POST /sign-in)
+POST http://localhost:3000/apis/v1/users/sign-in
 Content-Type: application/json
 Cookie: {{session}}
 
@@ -11,8 +10,10 @@ Cookie: {{session}}
   "password": "123"
 }
 
-### solicitud de nueva contraseña
-POST {{baseUrl}}/apis/v1/users/reset-password
+###
+
+### Restablecer Contraseña (POST /reset-password)
+POST http://localhost:3000/apis/v1/users/reset-password
 Content-Type: application/json
 Cookie: {{session}}
 
@@ -20,18 +21,38 @@ Cookie: {{session}}
   "email": "juan@example.com"
 }
 
-### solicitud de nueva contraseña
-GET {{baseUrl}}/apis/v1/users/record?user_id=2
+###
+
+### Consultar Registros de Usuario (GET /record)
+GET http://localhost:3000/apis/v1/users/record?user_id=2
 Content-Type: application/json
 Cookie: {{session}}
 
+###
 
+### Obtener Proveedores (GET /providers)
+GET http://localhost:3000/apis/v1/providers
+Content-Type: application/json
+Cookie: {{session}}
 
-### listar topics
-GET {{baseUrl}}/apis/v1/topics
+###
 
-### traer topic por id
-GET {{baseUrl}}/apis/v1/topics/1
+### Crear un Nuevo Proveedor (POST /providers)
+POST http://localhost:3000/apis/v1/providers
+Content-Type: application/json
+Cookie: {{session}}
 
-### traer topic por id - 404
-GET {{baseUrl}}/apis/v1/topics/11
+{
+  "ruc": "987654321",
+  "name": "Proveedor A",
+  "logo": "http://example.com/logo.png"
+}
+
+###
+
+### Eliminar un Proveedor (DELETE /providers/{provider_id})
+DELETE http://localhost:3000/apis/v1/providers/1
+Content-Type: application/json
+Cookie: {{session}}
+
+###

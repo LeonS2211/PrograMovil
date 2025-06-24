@@ -1,183 +1,139 @@
 const express = require("express");
-//const User = require("../models/user");
-const sequelize = require("../../config/database");
-const { jwtMiddleware } = require("../../config/middlewares");
+const Invoice = require("../models/invoice"); // Importamos el modelo Invoice
 const router = express.Router();
 
-// GET: BASE_URL + /apis/v1/topics
-router.get("/", jwtMiddleware, async (req, res) => {
-  const users = await User.findAll();
-  res.json(users);
-});
+// GET: /invoices/isp
+router.post("/isp", async (req, res) => {
+  const { ispServices } = req.body; // Recibimos la lista de servicios ISP
 
-router.post("/sign-in", async (req, res) => {
-  // recibir parametros
-  const { username, password } = req.body;
-  // trabajar respuesta
-  var response = {};
-  var status = null;
+  let response = {};
+  let status = null;
+
   try {
-    if (!username || !password) {
+    if (!Array.isArray(ispServices) || ispServices.length === 0) {
       response = {
-        message: "No envió usuario y contraseña",
+        message: "No se enviaron servicios ISP válidos.",
         detail: "",
       };
-      status = 500;
+      status = 400;
     } else {
-      const user = await User.findOne({
-        attributes: ['id', 'username', 'email', 'image', 'fullname'],
+      const ids = ispServices.map((service) => service.id);
+      const invoices = await Invoice.findAll({
         where: {
-          username: username,
-          password: password,
-        },
+          service_type: "ISP",
+          service_id: ids
+        }
       });
-      if (user) {
+
+      if (invoices.length > 0) {
+        response = invoices;
         status = 200;
-        response = user;
       } else {
-        status = 404;
         response = {
-          message: "Usuario no encontrado",
+          message: "No se encontraron facturas para los servicios ISP.",
           detail: "",
         };
+        status = 404;
       }
     }
   } catch (error) {
-    console.error("Error al validar el usuario:", error);
-    status = 500;
+    console.error("Error al obtener facturas ISP:", error);
     response = {
-      message: "Error al validar el usuario",
-      detail: error,
+      message: "Ocurrió un error al obtener las facturas ISP",
+      detail: error.message,
     };
+    status = 500;
   }
-  // enviar respuesta
+
   res.status(status).json(response);
 });
 
-function generateRandomKey(length = 30) {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let result = '';
-  
-  for (let i = 0; i < length; i++) {
-      const randomIndex = Math.floor(Math.random() * chars.length);
-      result += chars[randomIndex];
-  }
-  
-  return result;
-}
-
-router.post("/reset-password", async (req, res) => {
-  const { email } = req.body;
+// GET: /invoices/provider
+router.post("/provider", async (req, res) => {
+  const { providerServices } = req.body; // Recibimos la lista de servicios Provider
 
   let response = {};
   let status = null;
 
   try {
-    if (!email) {
-      return res.status(400).json({
-        message: "Correo no proporcionado",
+    if (!Array.isArray(providerServices) || providerServices.length === 0) {
+      response = {
+        message: "No se enviaron servicios Proveedor válidos.",
+        detail: "",
+      };
+      status = 400;
+    } else {
+      const ids = providerServices.map((service) => service.id);
+      const invoices = await Invoice.findAll({
+        where: {
+          service_type: "Proveedor",
+          service_id: ids
+        }
       });
+
+      if (invoices.length > 0) {
+        response = invoices;
+        status = 200;
+      } else {
+        response = {
+          message: "No se encontraron facturas para los servicios Proveedor.",
+          detail: "",
+        };
+        status = 404;
+      }
     }
-
-    const user = await User.findOne({
-      where: {
-        email: email,
-      },
-    });
-
-    if (!user) {
-      return res.status(404).json({
-        message: "Usuario no encontrado",
-      });
-    }
-
-    // Generar nueva reset_key y actualizar
-    const newResetKey = generateRandomKey();
-    await user.update({ reset_key: newResetKey });
-
-    // Recargar datos para tener la información actualizada
-    await user.reload();
-
-    response = {
-      message: "Clave de restablecimiento generada correctamente",
-    };
-
-    status = 200;
-
   } catch (error) {
-    console.error("Error al procesar solicitud:", error);
-
-    // Manejo específico para SQLITE_BUSY u otros errores conocidos
-    if (error.original?.code === 'SQLITE_BUSY') {
-      return res.status(503).json({
-        message: "Servicio temporalmente no disponible. Inténtalo más tarde."
-      });
-    }
-
-    return res.status(500).json({
-      message: "Ocurrió un error interno",
-      error: process.env.NODE_ENV === 'production' ? undefined : error.message
-    });
+    console.error("Error al obtener facturas Proveedor:", error);
+    response = {
+      message: "Ocurrió un error al obtener las facturas Proveedor",
+      detail: error.message,
+    };
+    status = 500;
   }
 
-  return res.status(status).json(response);
+  res.status(status).json(response);
 });
 
-router.get("/record", jwtMiddleware, async (req, res) => {
-  const { user_id } = req.query;
+// POST: /invoices/invoice
+router.post("/invoice", async (req, res) => {
+  const { invoice } = req.body; // Recibimos la factura a actualizar
 
   let response = {};
   let status = null;
 
   try {
-    const [results, metadata] = await sequelize.query(`
-      SELECT 
-          COALESCE((
-              SELECT COUNT(*) FROM alternatives A
-              INNER JOIN users_answers UA ON UA.alternative_id = A.id
-              WHERE A.correct = 1 AND UA.user_id = ${user_id}), 0) AS aciertos,
-  
-          COALESCE((
-              SELECT COUNT(*) FROM users U 
-              INNER JOIN quizzes Q ON U.id = Q.user_id 
-              INNER JOIN quizzes_questions QQ ON QQ.quiz_id = Q.id 
-              WHERE U.id = ${user_id}), 0) AS total_alternativas,
-  
-          (COALESCE((
-              SELECT COUNT(*) FROM alternatives A
-              INNER JOIN users_answers UA ON UA.alternative_id = A.id
-              WHERE A.correct = 1 AND UA.user_id = 1), 0)
-          ) * 1.0 /
-          NULLIF((
-              SELECT COUNT(*) FROM users U 
-              INNER JOIN quizzes Q ON U.id = Q.user_id 
-              INNER JOIN quizzes_questions QQ ON QQ.quiz_id = Q.id 
-              WHERE U.id = ${user_id}), 0) AS proporcion_acierto;
-    `);
-  
-    console.log('Resultado:', results[0]); // El resultado viene como un array de objetos
-  
-    response = results[0];
-      status = 200;
-    
-
-  } catch (error) {
-    console.error("Error al procesar solicitud:", error);
-
-    // Manejo específico para SQLITE_BUSY u otros errores conocidos
-    if (error.original?.code === 'SQLITE_BUSY') {
-      return res.status(503).json({
-        message: "Servicio temporalmente no disponible. Inténtalo más tarde."
-      });
-    }
-
-    return res.status(500).json({
-      message: "Ocurrió un error interno",
-      error: process.env.NODE_ENV === 'production' ? undefined : error.message
+    const existingInvoice = await Invoice.findOne({
+      where: {
+        id: invoice.id
+      }
     });
+
+    if (!existingInvoice) {
+      response = {
+        message: "Factura no encontrada.",
+        detail: "",
+      };
+      status = 404;
+    } else {
+      existingInvoice.invoiced = true;
+      await existingInvoice.save();
+
+      response = {
+        message: "Factura marcada como facturada.",
+        detail: "",
+      };
+      status = 200;
+    }
+  } catch (error) {
+    console.error("Error al facturar la factura:", error);
+    response = {
+      message: "Ocurrió un error al marcar la factura.",
+      detail: error.message,
+    };
+    status = 500;
   }
 
-  return res.status(status).json(response);
+  res.status(status).json(response);
 });
 
 module.exports = router;

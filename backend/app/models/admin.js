@@ -1,39 +1,32 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../../config/database');
-const Question = require('./question'); // Importamos el modelo Question
 
-const Alternative = sequelize.define('Alternative', {
+const Admin = sequelize.define('Admin', {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
         allowNull: false
     },
-    statement: {
+    username: {
+        type: DataTypes.STRING(100),
+        allowNull: false
+    },
+    password: {
         type: DataTypes.STRING(255),
         allowNull: false
     },
-    correct: {
-        type: DataTypes.BOOLEAN,
+    email: {
+        type: DataTypes.STRING(255),
         allowNull: false
     },
-    question_id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-            model: Question,
-            key: 'id'
-        }
+    role: {
+        type: DataTypes.STRING(50),
+        allowNull: false
     }
 }, {
-    tableName: 'alternatives',
+    tableName: 'admins',
     timestamps: false
 });
 
-// Definimos la relación con Question
-Alternative.belongsTo(Question, {
-    foreignKey: 'question_id',
-    as: 'question' // Alias opcional para usar en consultas
-});
-
-module.exports = Alternative;
+module.exports = Admin;

@@ -1,39 +1,78 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../../config/database');
-const Question = require('./question'); // Importamos el modelo Question
+const Company = require('./company');
+const Provider = require('./provider');
 
-const Alternative = sequelize.define('Alternative', {
+const Dependency = sequelize.define('Dependency', {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
         allowNull: false
     },
-    statement: {
-        type: DataTypes.STRING(255),
-        allowNull: false
-    },
-    correct: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false
-    },
-    question_id: {
+
+    company_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: Question,
+            model: Company,
             key: 'id'
         }
+    },
+
+    provider_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: Provider,
+            key: 'id'
+        }
+    },
+
+    name: {
+        type: DataTypes.STRING(255),
+        allowNull: false
+    },
+
+    sign_date: {
+        type: DataTypes.DATE,
+        allowNull: true
+    },
+
+    validity_time: {
+        type: DataTypes.STRING(255),
+        allowNull: true
+    },
+
+    termination_date: {
+        type: DataTypes.DATE,
+        allowNull: true
+    },
+
+    aniversary: {
+        type: DataTypes.STRING(255),
+        allowNull: true
+    },
+    
+    equipment: {
+        type: DataTypes.STRING(255),
+        allowNull: true
     }
 }, {
-    tableName: 'alternatives',
+    tableName: 'dependencies',
     timestamps: false
 });
 
-// Definimos la relación con Question
-Alternative.belongsTo(Question, {
-    foreignKey: 'question_id',
-    as: 'question' // Alias opcional para usar en consultas
+// Definimos la relación con Company
+Dependency.belongsTo(Company, {
+    foreignKey: 'company_id',
+    as: 'company' // Alias opcional para usar en consultas
 });
 
-module.exports = Alternative;
+// Definimos la relación con Provider
+Dependency.belongsTo(Provider, {
+    foreignKey: 'provider_id',
+    as: 'provider' // Alias opcional para usar en consultas
+});
+
+module.exports = Dependency;

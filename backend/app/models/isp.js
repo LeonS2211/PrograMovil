@@ -11,6 +11,10 @@ const ISP = sequelize.define('ISP', {
     name: {
         type: DataTypes.STRING(255),
         allowNull: false
+    },
+    ruc: {
+        type: DataTypes.STRING(11),
+        allowNull: false
     }
 }, {
     tableName: 'isps',

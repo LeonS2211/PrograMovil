@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../../config/database');
 const Company = require('./company');
-const Provider = require('/provider');
+const Provider = require('./provider');
 
 const Dependency = sequelize.define('Dependency', {
     id: {
@@ -64,13 +64,13 @@ const Dependency = sequelize.define('Dependency', {
 });
 
 // Definimos la relación con Company
-Contact.belongsTo(Company, {
+Dependency.belongsTo(Company, {
     foreignKey: 'company_id',
     as: 'company' // Alias opcional para usar en consultas
 });
 
 // Definimos la relación con Provider
-Contact.belongsTo(Provider, {
+Dependency.belongsTo(Provider, {
     foreignKey: 'provider_id',
     as: 'provider' // Alias opcional para usar en consultas
 });

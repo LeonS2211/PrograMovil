@@ -1,37 +1,4 @@
-@baseUrl = http://localhost:3000
-@session = mysession=MTc0OTMyNjc1M3xEWDhFQVFMX2dBQUJFQUVRQUFBb180QUFBUVp6ZEhKcGJtY01DQUFHYzNSaGRIVnpCbk4wY21sdVp3d0tBQWhoWTNScGRtRjBaUT09fDEwMNRr-eTvIKdIDTSfFrm61NAAZ06WflPGf2t7gHIC
+@baseUrl = http://localhost:3000/addresses
 
-### Login
-POST {{baseUrl}}/apis/v1/users/sign-in
-Content-Type: application/json
-Cookie: {{session}}
-
-{
-  "username": "juanperez",
-  "password": "123"
-}
-
-### solicitud de nueva contraseña
-POST {{baseUrl}}/apis/v1/users/reset-password
-Content-Type: application/json
-Cookie: {{session}}
-
-{
-  "email": "juan@example.com"
-}
-
-### solicitud de nueva contraseña
-GET {{baseUrl}}/apis/v1/users/record?user_id=2
-Content-Type: application/json
-Cookie: {{session}}
-
-
-
-### listar topics
-GET {{baseUrl}}/apis/v1/topics
-
-### traer topic por id
-GET {{baseUrl}}/apis/v1/topics/1
-
-### traer topic por id - 404
-GET {{baseUrl}}/apis/v1/topics/11
+### ✅ Obtener la dirección asociada a una empresa
+GET {{baseUrl}}/company/1

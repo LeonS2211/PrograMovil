@@ -88,14 +88,3 @@ Cookie: {{session}}
     "id": 999
   }
 }
-
-### Marcar una factura como facturada (Status 500)
-POST {{baseUrl}}/invoices/invoice
-Content-Type: application/json
-Cookie: {{session}}
-
-{
-  "invoice": {
-    "id": 1
-  }
-}

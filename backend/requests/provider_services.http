@@ -2,7 +2,7 @@
 @session = mysession=MTc0OTMyNjc1M3xEWDhFQVFMX2dBQUJFQUVRQUFBb180QUFBUVp6ZEhKcGJtY01DQUFHYzNSaGRIVnpCbk4wY21sdVp3d0tBQWhoWTNScGRtRjBaUT09fDEwMNRr-eTvIKdIDTSfFrm61NAAZ06WflPGf2t7gHIC
 
 ### Obtener servicios por proveedor (Status 200)
-POST {{baseUrl}}/apis/v1/provider-services/by-provider
+POST {{baseUrl}}/provider-services/by-provider
 Content-Type: application/json
 Cookie: {{session}}
 
@@ -11,7 +11,7 @@ Cookie: {{session}}
 }
 
 ### Obtener servicios por proveedor (Status 404) - No se encuentran servicios
-POST {{baseUrl}}/apis/v1/provider-services/by-provider
+POST {{baseUrl}}/provider-services/by-provider
 Content-Type: application/json
 Cookie: {{session}}
 
@@ -20,7 +20,7 @@ Cookie: {{session}}
 }
 
 ### Crear un nuevo servicio (Status 201)
-POST {{baseUrl}}/apis/v1/provider-services/create
+POST {{baseUrl}}/provider-services/create
 Content-Type: application/json
 Cookie: {{session}}
 
@@ -31,7 +31,7 @@ Cookie: {{session}}
 }
 
 ### Crear un servicio que ya existe (Status 409)
-POST {{baseUrl}}/apis/v1/provider-services/create
+POST {{baseUrl}}/provider-services/create
 Content-Type: application/json
 Cookie: {{session}}
 
@@ -42,7 +42,7 @@ Cookie: {{session}}
 }
 
 ### Crear un nuevo servicio (Status 500) - Error en la creación
-POST {{baseUrl}}/apis/v1/provider-services/create
+POST {{baseUrl}}/provider-services/create
 Content-Type: application/json
 Cookie: {{session}}
 

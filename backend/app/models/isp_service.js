@@ -1,39 +1,49 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../../config/database');
-const Question = require('./question'); // Importamos el modelo Question
+const ISP = require('./isp');
+const Provider = require('./provider'); // Asegúrate de tener este modelo creado
 
-const Alternative = sequelize.define('Alternative', {
+const IspService = sequelize.define('IspService', {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
         allowNull: false
     },
-    statement: {
+    description: {
         type: DataTypes.STRING(255),
         allowNull: false
     },
-    correct: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false
-    },
-    question_id: {
+    provider_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: Question,
+            model: Provider,
+            key: 'id'
+        }
+    },
+    isp_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: ISP,
             key: 'id'
         }
     }
 }, {
-    tableName: 'alternatives',
+    tableName: 'isp_services',
     timestamps: false
 });
 
-// Definimos la relación con Question
-Alternative.belongsTo(Question, {
-    foreignKey: 'question_id',
-    as: 'question' // Alias opcional para usar en consultas
+// Definir relaciones
+IspService.belongsTo(Provider, {
+    foreignKey: 'provider_id',
+    as: 'provider'
 });
 
-module.exports = Alternative;
+IspService.belongsTo(ISP, {
+    foreignKey: 'isp_id',
+    as: 'isp'
+});
+
+module.exports = IspService;

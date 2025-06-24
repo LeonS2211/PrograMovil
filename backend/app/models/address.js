@@ -1,39 +1,36 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../../config/database');
-const Question = require('./question'); // Importamos el modelo Question
 
-const Alternative = sequelize.define('Alternative', {
+const Address = sequelize.define('Address', {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
         allowNull: false
     },
-    statement: {
-        type: DataTypes.STRING(255),
+    address: {
+        type: DataTypes.STRING,
         allowNull: false
     },
-    correct: {
-        type: DataTypes.BOOLEAN,
+    district: {
+        type: DataTypes.STRING,
         allowNull: false
     },
-    question_id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-            model: Question,
-            key: 'id'
-        }
+    province: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    department: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    sector: {
+        type: DataTypes.STRING,
+        allowNull: false
     }
 }, {
-    tableName: 'alternatives',
+    tableName: 'addresses',
     timestamps: false
 });
 
-// Definimos la relación con Question
-Alternative.belongsTo(Question, {
-    foreignKey: 'question_id',
-    as: 'question' // Alias opcional para usar en consultas
-});
-
-module.exports = Alternative;
+module.exports = Address;

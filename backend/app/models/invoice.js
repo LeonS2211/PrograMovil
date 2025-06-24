@@ -1,39 +1,44 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../../config/database');
-const Question = require('./question'); // Importamos el modelo Question
 
-const Alternative = sequelize.define('Alternative', {
+const Invoice = sequelize.define('Invoice', {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
         allowNull: false
     },
-    statement: {
+    invoice_number: {
+        type: DataTypes.STRING(50),
+        allowNull: false
+    },
+    service_type: {
         type: DataTypes.STRING(255),
         allowNull: false
     },
-    correct: {
+    service_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+    },
+    invoice_month: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
+    invoiced: {
         type: DataTypes.BOOLEAN,
         allowNull: false
     },
-    question_id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-            model: Question,
-            key: 'id'
-        }
+    issue_date: {
+        type: DataTypes.DATE,
+        allowNull: false
+    },
+    due_date: {
+        type: DataTypes.DATE,
+        allowNull: false
     }
 }, {
-    tableName: 'alternatives',
+    tableName: 'invoices',
     timestamps: false
 });
 
-// Definimos la relación con Question
-Alternative.belongsTo(Question, {
-    foreignKey: 'question_id',
-    as: 'question' // Alias opcional para usar en consultas
-});
-
-module.exports = Alternative;
+module.exports = Invoice;

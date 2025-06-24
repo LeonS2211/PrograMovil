@@ -15,14 +15,6 @@ const Admin = sequelize.define('Admin', {
     password: {
         type: DataTypes.STRING(255),
         allowNull: false
-    },
-    email: {
-        type: DataTypes.STRING(255),
-        allowNull: false
-    },
-    role: {
-        type: DataTypes.STRING(50),
-        allowNull: false
     }
 }, {
     tableName: 'admins',

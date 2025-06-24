@@ -1,39 +1,61 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../../config/database');
-const Question = require('./question'); // Importamos el modelo Question
+const Dependency = require('./dependency'); // Importamos el modelo Dependency
 
-const Alternative = sequelize.define('Alternative', {
+const Contact = sequelize.define('Contact', {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
         allowNull: false
     },
-    statement: {
-        type: DataTypes.STRING(255),
-        allowNull: false
-    },
-    correct: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false
-    },
-    question_id: {
+    dependency_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: Question,
+            model: Dependency,
             key: 'id'
         }
+    },
+
+    name: {
+        type: DataTypes.STRING(255),
+        allowNull: false
+    },
+
+    last_name: {
+        type: DataTypes.STRING(255),
+        allowNull: false
+    },
+
+    cellphone: {
+        type: DataTypes.STRING(255),
+        allowNull: true
+    },
+
+    rank: {
+        type: DataTypes.STRING(255),
+        allowNull: true
+    },
+
+    position: {
+        type: DataTypes.STRING(255),
+        allowNull: true
+    },
+    
+    birthday: {
+        type: DataTypes.STRING(255),
+        allowNull: true
     }
 }, {
-    tableName: 'alternatives',
+    tableName: 'contacts',
     timestamps: false
 });
 
-// Definimos la relación con Question
-Alternative.belongsTo(Question, {
-    foreignKey: 'question_id',
-    as: 'question' // Alias opcional para usar en consultas
+// Definimos la relación con Dependency
+Contact.belongsTo(Dependency, {
+    foreignKey: 'dependency_id',
+    as: 'dependency' // Alias opcional para usar en consultas
 });
 
-module.exports = Alternative;
+module.exports = Contact;

@@ -1,5 +1,6 @@
 const express = require("express");
 const Admin = require("../models/admin"); // Importamos el modelo Admin
+const bcrypt = require("bcrypt"); // Para la validación segura de contraseñas
 const router = express.Router();
 
 // POST: Sign-in for admin login
@@ -13,25 +14,46 @@ router.post("/sign-in", async (req, res) => {
     // Verificamos si se recibieron los parámetros
     if (!username || !password) {
       response = {
-        message: "No envió usuario y contraseña",
-        detail: "",
+        message: "Por favor complete todos los campos",
+        detail: "Faltan usuario o contraseña",
       };
-      status = 400; // Cambié a 400 para indicar que la solicitud está incompleta
+      status = 400; // Solicitud incompleta
     } else {
       // Buscamos al administrador en la base de datos
       const admin = await Admin.findOne({
-        attributes: ['id', 'username', 'email', 'role'], // Asegúrate de que estos son los campos que necesitas
+        attributes: ['id', 'username', 'email', 'role', 'password', 'listProvider'], // Asegúrate de incluir `listProvider` y `password`
         where: {
           username: username,
-          password: password, // Asegúrate de manejar contraseñas de forma segura (con hash)
         },
       });
 
       if (admin) {
-        status = 200;
-        response = admin; // Devolvemos el administrador encontrado
+        // Verificar si la contraseña es correcta (en caso de que esté hasheada en la base de datos)
+        const passwordMatch = await bcrypt.compare(password, admin.password); // Compara la contraseña hasheada
+
+        if (passwordMatch) {
+          status = 200;
+          response = {
+            message: "Login exitoso",
+            body: {
+              id: admin.id,
+              username: admin.username,
+              email: admin.email,
+              role: admin.role,
+              listProvider: admin.listProvider, // Lista de proveedores para la siguiente pantalla
+            },
+          };
+        } else {
+          // Si la contraseña no es correcta
+          status = 401; // Unauthorized
+          response = {
+            message: "Credenciales incorrectas",
+            detail: "La contraseña es incorrecta",
+          };
+        }
       } else {
-        status = 404; // Si no encontramos al administrador
+        // Si no encontramos el administrador
+        status = 404; // No encontrado
         response = {
           message: "Administrador no encontrado",
           detail: "",

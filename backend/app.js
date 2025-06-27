@@ -34,8 +34,8 @@ app.use("/companies", companyController);
 app.use("/contacts", contactController);
 app.use("/dependencies", dependencyController);
 app.use("/invoices", invoiceController);
-//app.use("/isps", ispController);
-//app.use("/ispServices", ispServiceController);
+app.use("/isps", ispController);
+app.use("/ispServices", ispServiceController);
 app.use("/providers", providerController);
 app.use("/providerServices", providerServiceController);
 

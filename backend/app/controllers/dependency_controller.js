@@ -1,183 +1,184 @@
 const express = require("express");
-//const User = require("../models/user");
-const sequelize = require("../../config/database");
-const { jwtMiddleware } = require("../../config/middlewares");
+const Dependency = require("../models/dependency");
+const Provider = require("../models/provider");
 const router = express.Router();
 
-// GET: BASE_URL + /apis/v1/topics
-router.get("/", jwtMiddleware, async (req, res) => {
-  const users = await User.findAll();
-  res.json(users);
-});
-
-router.post("/sign-in", async (req, res) => {
-  // recibir parametros
-  const { username, password } = req.body;
-  // trabajar respuesta
-  var response = {};
-  var status = null;
+// GET: /dependencies
+router.get("/", async (req, res) => {
   try {
-    if (!username || !password) {
-      response = {
-        message: "No envió usuario y contraseña",
-        detail: "",
-      };
-      status = 500;
-    } else {
-      const user = await User.findOne({
-        attributes: ['id', 'username', 'email', 'image', 'fullname'],
-        where: {
-          username: username,
-          password: password,
-        },
-      });
-      if (user) {
-        status = 200;
-        response = user;
-      } else {
-        status = 404;
-        response = {
-          message: "Usuario no encontrado",
-          detail: "",
-        };
-      }
-    }
+    const dependencies = await Dependency.findAll();
+    res.status(200).json(dependencies);
   } catch (error) {
-    console.error("Error al validar el usuario:", error);
-    status = 500;
-    response = {
-      message: "Error al validar el usuario",
-      detail: error,
-    };
+    console.error("Error al obtener dependencias:", error);
+    res.status(500).json({
+      message: "Error al obtener dependencias",
+      detail: error.message,
+    });
   }
-  // enviar respuesta
-  res.status(status).json(response);
 });
 
-function generateRandomKey(length = 30) {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let result = '';
-  
-  for (let i = 0; i < length; i++) {
-      const randomIndex = Math.floor(Math.random() * chars.length);
-      result += chars[randomIndex];
-  }
-  
-  return result;
-}
-
-router.post("/reset-password", async (req, res) => {
-  const { email } = req.body;
-
-  let response = {};
-  let status = null;
+// GET: /dependencies/:id
+router.get("/:id", async (req, res) => {
+  const { id } = req.params;
 
   try {
-    if (!email) {
-      return res.status(400).json({
-        message: "Correo no proporcionado",
+    const dependency = await Dependency.findByPk(id);
+    if (!dependency) {
+      return res.status(404).json({
+        message: "Dependencia no encontrada",
+        detail: "",
       });
     }
 
-    const user = await User.findOne({
+    res.status(200).json(dependency);
+  } catch (error) {
+    console.error("Error al obtener dependencia:", error);
+    res.status(500).json({
+      message: "Error al obtener dependencia",
+      detail: error.message,
+    });
+  }
+});
+
+// GET: /dependencies/provider/:provider_id/company/:company_id
+router.get("/provider/:provider_id/company/:company_id", async (req, res) => {
+  const { provider_id, company_id } = req.params;
+
+  try {
+    const dependencies = await Dependency.findAll({
       where: {
-        email: email,
+        provider_id,
+        company_id
       },
     });
 
-    if (!user) {
+    if (dependencies.length === 0) {
       return res.status(404).json({
-        message: "Usuario no encontrado",
+        message: "No se encontraron dependencias para el proveedor y la compañía especificados",
+        detail: "",
       });
     }
 
-    // Generar nueva reset_key y actualizar
-    const newResetKey = generateRandomKey();
-    await user.update({ reset_key: newResetKey });
-
-    // Recargar datos para tener la información actualizada
-    await user.reload();
-
-    response = {
-      message: "Clave de restablecimiento generada correctamente",
-    };
-
-    status = 200;
-
+    res.status(200).json(dependencies);
   } catch (error) {
-    console.error("Error al procesar solicitud:", error);
-
-    // Manejo específico para SQLITE_BUSY u otros errores conocidos
-    if (error.original?.code === 'SQLITE_BUSY') {
-      return res.status(503).json({
-        message: "Servicio temporalmente no disponible. Inténtalo más tarde."
-      });
-    }
-
-    return res.status(500).json({
-      message: "Ocurrió un error interno",
-      error: process.env.NODE_ENV === 'production' ? undefined : error.message
+    console.error("Error al obtener dependencias:", error);
+    res.status(500).json({
+      message: "Error al obtener dependencias",
+      detail: error.message,
     });
   }
-
-  return res.status(status).json(response);
 });
 
-router.get("/record", jwtMiddleware, async (req, res) => {
-  const { user_id } = req.query;
-
-  let response = {};
-  let status = null;
-
+// GET: /dependencies/providers/names
+router.get("/providers/names", async (req, res) => {
   try {
-    const [results, metadata] = await sequelize.query(`
-      SELECT 
-          COALESCE((
-              SELECT COUNT(*) FROM alternatives A
-              INNER JOIN users_answers UA ON UA.alternative_id = A.id
-              WHERE A.correct = 1 AND UA.user_id = ${user_id}), 0) AS aciertos,
-  
-          COALESCE((
-              SELECT COUNT(*) FROM users U 
-              INNER JOIN quizzes Q ON U.id = Q.user_id 
-              INNER JOIN quizzes_questions QQ ON QQ.quiz_id = Q.id 
-              WHERE U.id = ${user_id}), 0) AS total_alternativas,
-  
-          (COALESCE((
-              SELECT COUNT(*) FROM alternatives A
-              INNER JOIN users_answers UA ON UA.alternative_id = A.id
-              WHERE A.correct = 1 AND UA.user_id = 1), 0)
-          ) * 1.0 /
-          NULLIF((
-              SELECT COUNT(*) FROM users U 
-              INNER JOIN quizzes Q ON U.id = Q.user_id 
-              INNER JOIN quizzes_questions QQ ON QQ.quiz_id = Q.id 
-              WHERE U.id = ${user_id}), 0) AS proporcion_acierto;
-    `);
-  
-    console.log('Resultado:', results[0]); // El resultado viene como un array de objetos
-  
-    response = results[0];
-      status = 200;
-    
+    const providers = await Provider.findAll({
+      attributes: ['id', 'name']
+    });
 
-  } catch (error) {
-    console.error("Error al procesar solicitud:", error);
-
-    // Manejo específico para SQLITE_BUSY u otros errores conocidos
-    if (error.original?.code === 'SQLITE_BUSY') {
-      return res.status(503).json({
-        message: "Servicio temporalmente no disponible. Inténtalo más tarde."
+    if (providers.length === 0) {
+      return res.status(404).json({
+        message: "No se encontraron proveedores",
+        detail: "",
       });
     }
 
-    return res.status(500).json({
-      message: "Ocurrió un error interno",
-      error: process.env.NODE_ENV === 'production' ? undefined : error.message
+    const formatted = providers.map(p => ({ id: p.id, name: p.name }));
+    res.status(200).json(formatted);
+  } catch (error) {
+    console.error("Error al obtener nombres de proveedores:", error);
+    res.status(500).json({
+      message: "Error al obtener nombres de proveedores",
+      detail: error.message,
     });
   }
+});
 
-  return res.status(status).json(response);
+// POST: /dependencies
+router.post("/", async (req, res) => {
+  const { provider_id, company_id, name, sign_date, validity_time, termination_date, anniversary, equipment } = req.body;
+
+  try {
+    if (!provider_id || !company_id || !name || !sign_date || !validity_time || !termination_date || !anniversary) {
+      return res.status(400).json({
+        message: "provider_id, company_id, name, sign_date, validity_time, termination_date y anniversary son requeridos",
+        detail: "",
+      });
+    }
+
+    const newDependency = await Dependency.create({ provider_id, company_id, name, sign_date, validity_time, termination_date, anniversary, equipment });
+    res.status(201).json(newDependency);
+  } catch (error) {
+    console.error("Error al crear dependencia:", error);
+    res.status(500).json({
+      message: "Error al crear dependencia",
+      detail: error.message,
+    });
+  }
+});
+
+// PUT: /dependencies/:id
+router.put("/:id", async (req, res) => {
+  const { id } = req.params;
+  const { provider_id, company_id, name, sign_date, validity_time, termination_date, anniversary, equipment } = req.body;
+
+  try {
+    const dependency = await Dependency.findByPk(id);
+
+    if (!dependency) {
+      return res.status(404).json({
+        message: "Dependencia no encontrada",
+        detail: "",
+      });
+    }
+
+    await dependency.update({
+      provider_id: provider_id || dependency.provider_id,
+      company_id: company_id || dependency.company_id,
+      name: name || dependency.name,
+      sign_date: sign_date || dependency.sign_date,
+      validity_time: validity_time || dependency.validity_time,
+      termination_date: termination_date || dependency.termination_date,
+      anniversary: anniversary || dependency.anniversary,
+      equipment: equipment || dependency.equipment
+    });
+
+    res.status(200).json(dependency);
+  } catch (error) {
+    console.error("Error al actualizar dependencia:", error);
+    res.status(500).json({
+      message: "Error al actualizar dependencia",
+      detail: error.message,
+    });
+  }
+});
+
+// DELETE: /dependencies/:id
+router.delete("/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const dependency = await Dependency.findByPk(id);
+
+    if (!dependency) {
+      return res.status(404).json({
+        message: "Dependencia no encontrada",
+        detail: "",
+      });
+    }
+
+    await dependency.destroy();
+    res.status(200).json({
+      message: "Dependencia eliminada correctamente",
+      detail: "",
+    });
+  } catch (error) {
+    console.error("Error al eliminar dependencia:", error);
+    res.status(500).json({
+      message: "Error al eliminar dependencia",
+      detail: error.message,
+    });
+  }
 });
 
 module.exports = router;

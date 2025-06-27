@@ -88,3 +88,38 @@ Cookie: {{session}}
     "id": 999
   }
 }
+
+### Error al obtener facturas de ISP (Status 500) - throw new Error("Forzado error en la base de datos");
+POST {{baseUrl}}/invoices/isp
+Content-Type: application/json
+Cookie: {{session}}
+
+{
+  "ispServices": [
+    { "id": 1 },
+    { "id": 3 }
+  ]
+}
+
+### Error al obtener facturas de Proveedor (Status 500) - throw new Error("Forzado error en la base de datos");
+POST {{baseUrl}}/invoices/provider
+Content-Type: application/json
+Cookie: {{session}}
+
+{
+  "providerServices": [
+    { "id": 2 },
+    { "id": 4 }
+  ]
+}
+
+### Error al marcar una factura como facturada (Status 500) - throw new Error("Forzado error en la base de datos");
+POST {{baseUrl}}/invoices/invoice
+Content-Type: application/json
+Cookie: {{session}}
+
+{
+  "invoice": {
+    "id": 4
+  }
+}

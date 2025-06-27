@@ -39,25 +39,26 @@ router.post("/by-provider", async (req, res) => {
   res.status(status).json(response);
 });
 
-// POST: /apis/v1/provider-services/create
+// POST: /providerServices/create
 router.post("/create", async (req, res) => {
-  const { description, providerId, price } = req.body; // Recibimos los datos para el nuevo servicio
+  const { description, dependencyId, providerId, price } = req.body; // Recibimos los datos para el nuevo servicio
 
   let response = {};
   let status = null;
 
   try {
-    // Comprobamos si ya existe un servicio con la misma descripción y proveedor
+    // Comprobamos si ya existe un servicio con la misma descripción, proveedor y dependencia
     const existingService = await ProviderService.findOne({
       where: {
         description: description,
-        provider_id: providerId
+        provider_id: providerId,
+        dependency_id: dependencyId  
       }
     });
 
     if (existingService) {
       response = {
-        message: "El servicio con esta descripción ya existe para este proveedor.",
+        message: "El servicio con esta descripción ya existe para este proveedor y dependencia.",
         detail: "",
       };
       status = 409; // Conflicto
@@ -66,6 +67,7 @@ router.post("/create", async (req, res) => {
       const newService = await ProviderService.create({
         description,
         provider_id: providerId,
+        dependency_id: dependencyId,
         price
       });
 

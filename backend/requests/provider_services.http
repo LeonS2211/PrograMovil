@@ -2,7 +2,7 @@
 @session = mysession=MTc0OTMyNjc1M3xEWDhFQVFMX2dBQUJFQUVRQUFBb180QUFBUVp6ZEhKcGJtY01DQUFHYzNSaGRIVnpCbk4wY21sdVp3d0tBQWhoWTNScGRtRjBaUT09fDEwMNRr-eTvIKdIDTSfFrm61NAAZ06WflPGf2t7gHIC
 
 ### Obtener servicios por proveedor (Status 200)
-POST {{baseUrl}}/provider-services/by-provider
+POST {{baseUrl}}/providerServices/by-provider
 Content-Type: application/json
 Cookie: {{session}}
 
@@ -11,7 +11,7 @@ Cookie: {{session}}
 }
 
 ### Obtener servicios por proveedor (Status 404) - No se encuentran servicios
-POST {{baseUrl}}/provider-services/by-provider
+POST {{baseUrl}}/providerServices/by-provider
 Content-Type: application/json
 Cookie: {{session}}
 
@@ -19,35 +19,48 @@ Cookie: {{session}}
   "providerId": 999
 }
 
+
 ### Crear un nuevo servicio (Status 201)
-POST {{baseUrl}}/provider-services/create
+POST {{baseUrl}}/providerServices/create
 Content-Type: application/json
 Cookie: {{session}}
 
 {
   "description": "Nuevo servicio de soporte técnico",
+  "dependencyId": 1,
   "providerId": 1,
   "price": 150.00
 }
 
 ### Crear un servicio que ya existe (Status 409)
-POST {{baseUrl}}/provider-services/create
+POST {{baseUrl}}/providerServices/create
 Content-Type: application/json
 Cookie: {{session}}
 
 {
   "description": "Nuevo servicio de soporte técnico",
+  "dependencyId": 1,
   "providerId": 1,
   "price": 150.00
 }
 
-### Crear un nuevo servicio (Status 500) - Error en la creación
-POST {{baseUrl}}/provider-services/create
+### Error al obtener servicios por proveedor (Status 500) - throw new Error("Forzado error en la base de datos");
+POST {{baseUrl}}/providerServices/by-provider
+Content-Type: application/json
+Cookie: {{session}}
+
+{
+  "providerId": 1
+}
+
+### Crear un nuevo servicio (Status 500) - throw new Error("Forzado error en la base de datos");
+POST {{baseUrl}}/providerServices/create
 Content-Type: application/json
 Cookie: {{session}}
 
 {
   "description": "Servicio de mantenimiento en línea",
+  "dependencyId": 1,
   "providerId": 1,
-  "price": "abc"  // Simulamos un error al pasar un valor no numérico para el precio
+  "price": "700.00" 
 }

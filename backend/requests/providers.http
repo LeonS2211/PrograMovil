@@ -1,58 +1,14 @@
 @baseUrl = http://localhost:3000
 @session = mysession=MTc0OTMyNjc1M3xEWDhFQVFMX2dBQUJFQUVRQUFBb180QUFBUVp6ZEhKcGJtY01DQUFHYzNSaGRIVnpCbk4wY21sdVp3d0tBQWhoWTNScGRtRjBaUT09fDEwMNRr-eTvIKdIDTSfFrm61NAAZ06WflPGf2t7gHIC
-### Login del Administrador (POST /sign-in)
-POST http://localhost:3000/apis/v1/users/sign-in
+### Agarrar los providers con una lista de sus ids
+POST {{baseUrl}}/providers/fetch-by-ids
 Content-Type: application/json
 Cookie: {{session}}
 
 {
-  "username": "juanperez",
-  "password": "123"
+  "ids": [1,2,3] 
 }
 
 ###
 
-### Restablecer Contraseña (POST /reset-password)
-POST http://localhost:3000/apis/v1/users/reset-password
-Content-Type: application/json
-Cookie: {{session}}
 
-{
-  "email": "juan@example.com"
-}
-
-###
-
-### Consultar Registros de Usuario (GET /record)
-GET http://localhost:3000/apis/v1/users/record?user_id=2
-Content-Type: application/json
-Cookie: {{session}}
-
-###
-
-### Obtener Proveedores (GET /providers)
-GET http://localhost:3000/apis/v1/providers
-Content-Type: application/json
-Cookie: {{session}}
-
-###
-
-### Crear un Nuevo Proveedor (POST /providers)
-POST http://localhost:3000/apis/v1/providers
-Content-Type: application/json
-Cookie: {{session}}
-
-{
-  "ruc": "987654321",
-  "name": "Proveedor A",
-  "logo": "http://example.com/logo.png"
-}
-
-###
-
-### Eliminar un Proveedor (DELETE /providers/{provider_id})
-DELETE http://localhost:3000/apis/v1/providers/1
-Content-Type: application/json
-Cookie: {{session}}
-
-###

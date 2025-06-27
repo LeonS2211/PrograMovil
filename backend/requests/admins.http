@@ -1,28 +1,13 @@
 @baseUrl = http://localhost:3000
 @session = mysession=MTc0OTMyNjc1M3xEWDhFQVFMX2dBQUJFQUVRQUFBb180QUFBUVp6ZEhKcGJtY01DQUFHYzNSaGRIVnpCbk4wY21sdVp3d0tBQWhoWTNScGRtRjBaUT09fDEwMNRr-eTvIKdIDTSfFrm61NAAZ06WflPGf2t7gHIC
 
-### Asociar un Administrador con un Proveedor (POST /admin_provider/associate)
-POST {{baseUrl}}/apis/v1/admin_provider/associate
+### Loguearse 
+POST {{baseUrl}}/admins/sign-in
 Content-Type: application/json
 Cookie: {{session}}
 
 {
-  "admin_id": 1,
-  "provider_id": 2
+  "username": "juanperez",
+  "password": "123"
 }
 
-###
-
-### Obtener Proveedores de un Administrador (GET /admin_provider/admin/{admin_id}/providers)
-GET {{baseUrl}}/apis/v1/admin_provider/admin/1/providers
-Content-Type: application/json
-Cookie: {{session}}
-
-###
-
-### Eliminar la Relación entre un Administrador y un Proveedor (DELETE /admin_provider/{id})
-DELETE {{baseUrl}}/apis/v1/admin_provider/1
-Content-Type: application/json
-Cookie: {{session}}
-
-###

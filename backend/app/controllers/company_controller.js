@@ -1,6 +1,5 @@
 const express = require("express");
 const Company = require("../models/company");
-const Address = require("../models/address");
 
 const router = express.Router();
 

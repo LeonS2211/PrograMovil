@@ -1,37 +1,50 @@
 @baseUrl = http://localhost:3000
 @session = mysession=MTc0OTMyNjc1M3xEWDhFQVFMX2dBQUJFQUVRQUFBb180QUFBUVp6ZEhKcGJtY01DQUFHYzNSaGRIVnpCbk4wY21sdVp3d0tBQWhoWTNScGRtRjBaUT09fDEwMNRr-eTvIKdIDTSfFrm61NAAZ06WflPGf2t7gHIC
 
-### Login
-POST {{baseUrl}}/apis/v1/users/sign-in
+### ✅ GET: Todos los contactos
+GET {{baseUrl}}/contacts
+Cookie: {{session}}
+
+### ✅ GET: Contacto por ID (ej. ID 1)
+GET {{baseUrl}}/contacts/1
+Cookie: {{session}}
+
+### ✅ GET: Contactos por dependencia (ej. ID 1)
+GET {{baseUrl}}/contacts/dependency/3
+Cookie: {{session}}
+
+
+
+### ✅ POST: Crear nuevo contacto
+POST {{baseUrl}}/contacts
 Content-Type: application/json
 Cookie: {{session}}
 
 {
-  "username": "juanperez",
-  "password": "123"
+  "dependency_id": 1,
+  "name": "Carlos",
+  "last_name": "Agregado",
+  "cellphone": "987654321",
+  "rank": "Agregado",
+  "position": "Analista",
+  "birthday": "Contacto de prueba"
 }
 
-### solicitud de nueva contraseña
-POST {{baseUrl}}/apis/v1/users/reset-password
+### ✅ PUT: Actualizar contacto (ej. ID 1)
+PUT {{baseUrl}}/contacts/21
 Content-Type: application/json
 Cookie: {{session}}
 
 {
-  "email": "juan@example.com"
+  "dependency_id": 3,
+  "name": "Carlos Editado",
+  "last_name": "Last agragado",
+  "cellphone": "912345678",
+  "position": "Jefe de proyecto",
+  "birthday": "03-25"
 }
 
-### solicitud de nueva contraseña
-GET {{baseUrl}}/apis/v1/users/record?user_id=2
-Content-Type: application/json
+### DELETE: Eliminar contacto
+DELETE {{baseUrl}}/contacts/21
 Cookie: {{session}}
 
-
-
-### listar topics
-GET {{baseUrl}}/apis/v1/topics
-
-### traer topic por id
-GET {{baseUrl}}/apis/v1/topics/1
-
-### traer topic por id - 404
-GET {{baseUrl}}/apis/v1/topics/11

@@ -1,36 +1,18 @@
 @baseUrl = http://localhost:3000
-@session = mysession=MTc0OTMyNjc1M3xEWDhFQVFMX2dBQUJFQUVRQUFBb180QUFBUVp6ZEhKcGJtY01DQUFHYzNSaGRIVnpCbk4wY21sdVp3d0tBQWhoWTNScGRtRjBaUT09fDEwMNRr-eTvIKdIDTSfFrm61NAAZ06WflPGf2t7gHIC
 
-### Listar todos los ISP
-GET {{baseUrl}}/apis/v1/isps
+### Obtener todos los ISPs (dropdown CU10.3)
+GET {{baseUrl}}/isps
 Content-Type: application/json
-Cookie: {{session}}
 
-### Traer ISP por id
-GET {{baseUrl}}/apis/v1/isps/1
-Content-Type: application/json
-Cookie: {{session}}
-
-### Traer ISP por id - 404 esperado
-GET {{baseUrl}}/apis/v1/isps/999
-Content-Type: application/json
-Cookie: {{session}}
+### Obtener un ISP por ID
+GET {{baseUrl}}/isps/2
+Content-Type: application/json 
 
 ### Crear un nuevo ISP
-POST {{baseUrl}}/apis/v1/isps
+POST {{baseUrl}}/isps
 Content-Type: application/json
-Cookie: {{session}}
 
 {
-  "name": "Nuevo ISP Ejemplo"
+  "name": "Mi nuevo ISP",
+  "ruc": "20999999999"
 }
-
-### Crear ISP con datos incompletos (para probar error 400)
-POST {{baseUrl}}/apis/v1/isps
-Content-Type: application/json
-Cookie: {{session}}
-
-{
-  "nombre_incorrecto": "Sin campo name"
-}
-

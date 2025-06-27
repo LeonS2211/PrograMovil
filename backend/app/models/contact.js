@@ -30,22 +30,22 @@ const Contact = sequelize.define('Contact', {
 
     cellphone: {
         type: DataTypes.STRING(255),
-        allowNull: true
+        allowNull: false
     },
 
     rank: {
         type: DataTypes.STRING(255),
-        allowNull: true
+        allowNull: false
     },
 
     position: {
         type: DataTypes.STRING(255),
-        allowNull: true
+        allowNull: false
     },
     
     birthday: {
         type: DataTypes.STRING(255),
-        allowNull: true
+        allowNull: false
     }
 }, {
     tableName: 'contacts',

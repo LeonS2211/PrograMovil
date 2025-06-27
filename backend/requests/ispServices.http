@@ -1,0 +1,20 @@
+@baseUrl = http://localhost:3000
+
+### Crear un nuevo servicio ISP (CU10.3)
+POST {{baseUrl}}/ispServices
+Content-Type: application/json
+
+{
+  "isp_id": 1,
+  "provider_id": 3,
+  "description": "Fibra óptica premium 500Mbps",
+  "cost": 199.90,
+  "pay_code": "NEW001"
+}
+
+### Obtener todos los servicios ISP
+GET {{baseUrl}}/ispServices
+
+### Obtener un servicio ISP por ID
+GET {{baseUrl}}/ispServices/1
+

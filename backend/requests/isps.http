@@ -1,36 +1,24 @@
 @baseUrl = http://localhost:3000
 @session = mysession=MTc0OTMyNjc1M3xEWDhFQVFMX2dBQUJFQUVRQUFBb180QUFBUVp6ZEhKcGJtY01DQUFHYzNSaGRIVnpCbk4wY21sdVp3d0tBQWhoWTNScGRtRjBaUT09fDEwMNRr-eTvIKdIDTSfFrm61NAAZ06WflPGf2t7gHIC
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbjEiLCJpYXQiOjE3NTI3MzY4MzksImV4cCI6MTc1Mjc0MDQzOX0.pDhMKAxo1PkKuPv9AAr-CjaH9Hw4ECTSe6rTTsd3_k4
 
-### Listar todos los ISP
-GET {{baseUrl}}/apis/v1/isps
-Content-Type: application/json
+### Obtener todos los ISPs (dropdown CU10.3)
+GET {{baseUrl}}/isps
 Cookie: {{session}}
+Authorization: Bearer {{token}}
 
-### Traer ISP por id
-GET {{baseUrl}}/apis/v1/isps/1
-Content-Type: application/json
+### Obtener un ISP por ID
+GET {{baseUrl}}/isps/2
 Cookie: {{session}}
-
-### Traer ISP por id - 404 esperado
-GET {{baseUrl}}/apis/v1/isps/999
-Content-Type: application/json
-Cookie: {{session}}
+Authorization: Bearer {{token}}
 
 ### Crear un nuevo ISP
-POST {{baseUrl}}/apis/v1/isps
+POST {{baseUrl}}/isps
 Content-Type: application/json
 Cookie: {{session}}
+Authorization: Bearer {{token}}
 
 {
-  "name": "Nuevo ISP Ejemplo"
+  "name": "Mi nuevo ISP",
+  "ruc": "20999999999"
 }
-
-### Crear ISP con datos incompletos (para probar error 400)
-POST {{baseUrl}}/apis/v1/isps
-Content-Type: application/json
-Cookie: {{session}}
-
-{
-  "nombre_incorrecto": "Sin campo name"
-}
-

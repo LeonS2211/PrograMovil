@@ -1,71 +1,54 @@
-/*const express = require('express');
-const fs = require('fs');
-const app = express();
-const PORT = 3000;
+const express = require('express');
+const ISP = require('../models/isp');
+const Dependency = require('../models/dependency'); // 👈 NUEVO IMPORTANTE
+const { jwtMiddleware } = require("../../config/middlewares");
+const router = express.Router();
 
-app.use(express.json());
-
-// Cargar el JSON de ISPs al arrancar
-let isps = [];
-fs.readFile('./assets/jsons/isp.json', 'utf8', (err, data) => {
-  if (err) {
-    console.error('Error al leer el archivo isp.json:', err);
-  } else {
-    isps = JSON.parse(data);
+// GET /isps → todos los ISPs
+router.get('/', jwtMiddleware, async (req, res) => {
+  try {
+    const isps = await ISP.findAll();
+    const result = isps.map(isp => ({ id: isp.id, name: isp.name }));
+    res.status(200).json(result);
+  } catch (err) {
+    res.status(500).json({ message: 'Error al obtener ISPs', error: err });
   }
 });
 
-// GET: obtener todos los ISPs
-app.get('/isp', (req, res) => {
-  const ispNamesWithId = isps.map(isp => ({
-    id: isp.id,
-    name: isp.name
-  }));
-  res.status(200).json({
-    status: 200,
-    body: ispNamesWithId
-  });
+// GET /isps/:id → un ISP por ID
+router.get('/:id', jwtMiddleware, async (req, res) => {
+  try {
+    const id = parseInt(req.params.id, 10);
+    const isp = await ISP.findByPk(id);
+    if (isp) {
+      res.status(200).json(isp);
+    } else {
+      res.status(404).json({ message: 'ISP no encontrado' });
+    }
+  } catch (err) {
+    res.status(500).json({ message: 'Error al obtener ISP', error: err });
+  }
 });
 
-// GET: obtener un ISP por ID
-app.get('/isp/:id', (req, res) => {
-  const id = parseInt(req.params.id, 10);
-  const isp = isps.find(i => i.id === id);
+// POST /isps → agregar un ISP
+router.post('/', jwtMiddleware, async (req, res) => {
+  const { name, ruc } = req.body;
 
-  if (isp) {
-    res.status(200).json({
-      status: 200,
-      body: isp
-    });
-  } else {
-    res.status(404).json({
-      status: 404,
-      body: null
+  if (!name) {
+    return res.status(400).json({ message: 'Missing name' });
+  }
+
+  try {
+    const newIsp = await ISP.create({ name, ruc });
+    res.status(201).json(newIsp);
+  } catch (err) {
+    res.status(500).json({
+      message: 'Error al crear ISP',
+      error: err.message
     });
   }
 });
 
-// POST: agregar un nuevo ISP
-app.post('/isp', (req, res) => {
-  const { id, name } = req.body;
 
-  if (!id || !name) {
-    return res.status(400).json({
-      status: 400,
-      body: 'Missing id or name'
-    });
-  }
 
-  // Simular agregar al array (no persiste en el archivo)
-  isps.push({ id, name });
-
-  res.status(201).json({
-    status: 201,
-    body: { id, name }
-  });
-});
-
-app.listen(PORT, () => {
-  console.log(`Servidor backend corriendo en http://localhost:${PORT}`);
-});
-*/
+module.exports = router;

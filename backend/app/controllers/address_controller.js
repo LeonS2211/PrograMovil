@@ -1,11 +1,12 @@
 const express = require("express");
 const Company = require("../models/company");
 const Address = require("../models/address");
+const { jwtMiddleware } = require("../../config/middlewares");
 
 const router = express.Router();
 
 // Obtener la dirección asociada a una empresa
-router.get("/company/:companyId", async (req, res) => {
+router.get("/company/:companyId", jwtMiddleware, async (req, res) => {
   const { companyId } = req.params;
 
   try {

@@ -1,13 +1,13 @@
 class Admin {
-  int id;
+  int? id;
   String username;
-  String password;
+  String? password;
   List<int>? listProvider;
 
   Admin({
-    required this.id,
+    this.id,
     required this.username,
-    required this.password,
+    this.password,
     this.listProvider,
   });
 

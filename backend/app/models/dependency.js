@@ -36,27 +36,27 @@ const Dependency = sequelize.define('Dependency', {
 
     sign_date: {
         type: DataTypes.DATE,
-        allowNull: true
+        allowNull: false
     },
 
     validity_time: {
         type: DataTypes.STRING(255),
-        allowNull: true
+        allowNull: false
     },
 
     termination_date: {
         type: DataTypes.DATE,
-        allowNull: true
+        allowNull: false
     },
 
-    aniversary: {
+    anniversary: {
         type: DataTypes.STRING(255),
-        allowNull: true
+        allowNull: false
     },
     
     equipment: {
         type: DataTypes.STRING(255),
-        allowNull: true
+        allowNull: false
     }
 }, {
     tableName: 'dependencies',

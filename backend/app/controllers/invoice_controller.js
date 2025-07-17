@@ -1,9 +1,10 @@
 const express = require("express");
+const { jwtMiddleware } = require("../../config/middlewares");
 const Invoice = require("../models/invoice"); // Importamos el modelo Invoice
 const router = express.Router();
 
 // GET: /invoices/isp
-router.post("/isp", async (req, res) => {
+router.post("/isp", jwtMiddleware, async (req, res) => {
   const { ispServices } = req.body; // Recibimos la lista de servicios ISP
 
   let response = {};
@@ -49,7 +50,7 @@ router.post("/isp", async (req, res) => {
 });
 
 // GET: /invoices/provider
-router.post("/provider", async (req, res) => {
+router.post("/provider", jwtMiddleware, async (req, res) => {
   const { providerServices } = req.body; // Recibimos la lista de servicios Provider
 
   let response = {};
@@ -95,7 +96,7 @@ router.post("/provider", async (req, res) => {
 });
 
 // POST: /invoices/invoice
-router.post("/invoice", async (req, res) => {
+router.post("/invoice", jwtMiddleware, async (req, res) => {
   const { invoice } = req.body; // Recibimos la factura a actualizar
 
   let response = {};

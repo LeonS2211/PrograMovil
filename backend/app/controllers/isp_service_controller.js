@@ -1,74 +1,57 @@
-/*
-const fs = require('fs');
-const app = express();
-const PORT = 3000;
-
-app.use(express.json());
-
-let ispServices = [];
-
-// Cargar los datos al iniciar
-fs.readFile('./assets/jsons/isp_service.json', 'utf8', (err, data) => {
-  if (err) {
-    console.error('Error al leer isp_service.json:', err);
-  } else {
-    ispServices = JSON.parse(data);
-    console.log(`Cargados ${ispServices.length} servicios`);
+const express = require('express');
+const ISPService = require('../models/isp_service');
+const router = express.Router();
+const { jwtMiddleware } = require("../../config/middlewares");
+// GET /isp_services?provider_id=ID (opcional)
+router.get('/', jwtMiddleware, async (req, res) => {
+  try {
+    const providerId = parseInt(req.query.provider_id, 10);
+    let services;
+    if (providerId) {
+      services = await ISPService.findAll({ where: { provider_id: providerId } });
+    } else {
+      services = await ISPService.findAll();
+    }
+    res.status(200).json(services);
+  } catch (err) {
+    res.status(500).json({ message: 'Error al obtener servicios', error: err });
   }
 });
 
-// GET /isp-service?providerId=ID
-app.get('/isp-service', (req, res) => {
-  const providerId = parseInt(req.query.providerId, 10);
+// GET /isp_services/:id
+router.get('/:id', jwtMiddleware, async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    const service = await ISPService.findByPk(id);
+    if (service) {
+      res.status(200).json(service);
+    } else {
+      res.status(404).json({ message: 'Servicio no encontrado' });
+    }
+  } catch (err) {
+    res.status(500).json({ message: 'Error al obtener el servicio', error: err });
+  }
+});
 
-  if (providerId) {
-    const filtered = ispServices.filter(s => s.providerId === providerId);
-    return res.status(200).json({
-      status: 200,
-      body: filtered
+// POST /isp_services
+router.post('/', jwtMiddleware, async (req, res) => {
+  const { isp_id, provider_id, description, cost, pay_code } = req.body;
+  if (!isp_id || !provider_id || !description || !cost || !pay_code) {
+    return res.status(400).json({ message: 'Faltan campos obligatorios' });
+  }
+  try {
+    const newService = await ISPService.create({
+      isp_id,
+      provider_id,
+      description,
+      cost,
+      pay_code
     });
+    res.status(201).json(newService);
+  } catch (err) {
+    res.status(500).json({ message: 'Error al crear servicio', error: err });
   }
-
-  // Si no se pasa providerId, devuelve todos
-  res.status(200).json({
-    status: 200,
-    body: ispServices
-  });
 });
 
-// POST /isp-service
-app.post('/isp-service', (req, res) => {
-  const { id, description, providerId } = req.body;
+module.exports = router;
 
-  if (!id || !description || !providerId) {
-    return res.status(400).json({
-      status: 400,
-      body: 'Missing id, description, or providerId'
-    });
-  }
-
-  // Verificar si existe
-  const exists = ispServices.some(s => 
-    s.description === description && s.providerId === providerId
-  );
-
-  if (exists) {
-    return res.status(409).json({
-      status: 409,
-      body: false
-    });
-  }
-
-  // Agregar al array (en memoria)
-  ispServices.push({ id, description, providerId });
-
-  res.status(201).json({
-    status: 201,
-    body: true
-  });
-});
-
-app.listen(PORT, () => {
-  console.log(`Servidor backend corriendo en http://localhost:${PORT}`);
-});
-*/

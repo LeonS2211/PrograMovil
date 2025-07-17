@@ -14,12 +14,18 @@ import 'package:helloworld/services/contact_service.dart';
 import './pages/sign_in/sign_in_page.dart';
 import 'package:get/get.dart';
 
+import 'services/storage_service.dart' show StorageService;
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
   // Initialize controllers and services
   Get.put(SelectedProviderController()); // controlador global
   Get.put(ContactService()); // servicio de contactos
+    // Inicializa el servicio de almacenamiento
+  final storageService = StorageService();
+  await storageService.init();
+
   
   runApp(MyApp());
 }

@@ -9,10 +9,7 @@ import 'package:http/http.dart' as http;
 import '../models/http_error.dart';
 
 class ProviderServiceService {
-  Future<ServiceHttpResponse> fetchByProvider({
-    required String token,
-    required int providerId,
-  }) async {
+  Future<ServiceHttpResponse> fetchByProvider(String token, int providerId) async {
     final url = Uri.parse(BASE_URL + 'providerServices/by-provider');
     final ServiceHttpResponse serviceResponse = ServiceHttpResponse();
 
@@ -58,10 +55,7 @@ class ProviderServiceService {
     return serviceResponse;
   }
 
-  Future<ServiceHttpResponse> createNewService({
-    required String token,
-    required ProviderService newService,
-  }) async {
+  Future<ServiceHttpResponse> createNewService(String token, ProviderService newService) async {
     final url = Uri.parse(BASE_URL + 'providerServices/create');
     final ServiceHttpResponse serviceResponse = ServiceHttpResponse();
 

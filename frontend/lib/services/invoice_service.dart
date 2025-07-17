@@ -12,10 +12,8 @@ import '../models/http_error.dart';
 
 class InvoiceService {
   /// ✅ Obtener facturas de servicios ISP
-  Future<ServiceHttpResponse> getIspInvoice({
-    required String token,
-    required List<IspService> ispServices,
-  }) async {
+  Future<ServiceHttpResponse> getIspInvoice(
+      String token, List<IspService> ispServices) async {
     final url = Uri.parse(BASE_URL + 'invoices/isp');
     final ServiceHttpResponse serviceResponse = ServiceHttpResponse();
 
@@ -60,10 +58,8 @@ class InvoiceService {
   }
 
   /// ✅ Obtener facturas de servicios Provider
-  Future<ServiceHttpResponse> getProviderInvoice({
-    required String token,
-    required List<ProviderService> providerServices,
-  }) async {
+  Future<ServiceHttpResponse> getProviderInvoice(
+      String token, List<ProviderService> providerServices) async {
     final url = Uri.parse(BASE_URL + 'invoices/provider');
     final ServiceHttpResponse serviceResponse = ServiceHttpResponse();
 
@@ -108,10 +104,7 @@ class InvoiceService {
   }
 
   /// ✅ Marcar una factura como facturada
-  Future<ServiceHttpResponse> invoicing({
-    required String token,
-    required Invoice invoice,
-  }) async {
+  Future<ServiceHttpResponse> invoicing(String token, Invoice invoice) async {
     final url = Uri.parse(BASE_URL + 'invoices/invoice');
     final ServiceHttpResponse serviceResponse = ServiceHttpResponse();
 

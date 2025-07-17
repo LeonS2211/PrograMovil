@@ -19,6 +19,9 @@ import '../../models/entities/invoice.dart';
 import '../../models/entities/dependency.dart';
 import '../../models/entities/isp.dart';
 import '../../selected_provider_controller.dart';
+
+import 'package:shared_preferences/shared_preferences.dart';
+//import '../../models/service_http_response.dart';
 /*
 // Modelo para estructurar los datos financieros
 class FinancialItem {
@@ -418,9 +421,10 @@ class FinancialStatementController extends GetxController {
   Future<void> _loadIngresos(Provider provider) async {
     try {
       print('Cargando ingresos para provider ID: ${provider.id}');
-
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('jwt_token');
       final providerServicesResponse =
-          await providerServiceService.fetchByProvider(provider);
+          await providerServiceService.fetchByProvider(token!, provider.id!);
       if (providerServicesResponse.status == 200) {
         final List<ProviderService> providerServices =
             providerServicesResponse.body;
@@ -432,7 +436,7 @@ class FinancialStatementController extends GetxController {
         }
 
         final invoicesResponse =
-            await invoiceService.getProviderInvoice(providerServices);
+            await invoiceService.getProviderInvoice(token, providerServices);
         if (invoicesResponse.status == 200) {
           final List<Invoice> invoices = invoicesResponse.body;
           List<FinancialItem> ingresosTemp = [];
@@ -486,6 +490,8 @@ class FinancialStatementController extends GetxController {
   Future<void> _loadEgresos(Provider provider) async {
     try {
       print('Cargando egresos para provider ID: ${provider.id}');
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('jwt_token');
 
       final ispServicesResponse =
           await ispServiceService.fetchByProvider(provider);
@@ -498,7 +504,7 @@ class FinancialStatementController extends GetxController {
         }
 
         final invoicesResponse =
-            await invoiceService.getIspInvoice(ispServices);
+            await invoiceService.getIspInvoice(token!, ispServices);
         if (invoicesResponse.status == 200) {
           final List<Invoice> invoices = invoicesResponse.body;
           List<FinancialItem> egresosTemp = [];
@@ -852,136 +858,140 @@ class FinancialStatementController extends GetxController {
     return 'Filtros: ${filtros.join(', ')}';
   }
 
-Future exportToPdf() async {
-  final pdf = pw.Document();
-  
-  // Cargar fuente Roboto
-  final fontData = await rootBundle.load("assets/fonts/roboto.ttf");
-  final roboto = pw.Font.ttf(fontData);
+  Future exportToPdf() async {
+    final pdf = pw.Document();
 
-  // Cargar logo
-  final ByteData logoData = await rootBundle.load('assets/images/logo_proveedify.png');
-  final Uint8List logoBytes = logoData.buffer.asUint8List();
-  final logoImage = pw.MemoryImage(logoBytes);
+    // Cargar fuente Roboto
+    final fontData = await rootBundle.load("assets/fonts/roboto.ttf");
+    final roboto = pw.Font.ttf(fontData);
 
-  // Preparar datos de ingresos para PDF
-  List<List<String>> ingresosData = ingresos
-      .map((item) => [
-            item.name,
-            item.ruc,
-            item.date,
-            item.dependency,
-            item.amount,
-          ])
-      .toList();
-  ingresosData.add([
-    'Total ingresos',
-    '',
-    '',
-    '',
-    'S/ ${totalIngresos.value.toStringAsFixed(2)}'
-  ]);
+    // Cargar logo
+    final ByteData logoData =
+        await rootBundle.load('assets/images/logo_proveedify.png');
+    final Uint8List logoBytes = logoData.buffer.asUint8List();
+    final logoImage = pw.MemoryImage(logoBytes);
 
-  // Preparar datos de egresos para PDF
-  List<List<String>> egresosData = egresos
-      .map((item) => [
-            item.name,
-            item.ruc,
-            item.date,
-            item.ispName ?? '',
-            item.amount,
-          ])
-      .toList();
-  egresosData.add([
-    'Total egresos',
-    '',
-    '',
-    '',
-    'S/ ${totalEgresos.value.toStringAsFixed(2)}'
-  ]);
+    // Preparar datos de ingresos para PDF
+    List<List<String>> ingresosData = ingresos
+        .map((item) => [
+              item.name,
+              item.ruc,
+              item.date,
+              item.dependency,
+              item.amount,
+            ])
+        .toList();
+    ingresosData.add([
+      'Total ingresos',
+      '',
+      '',
+      '',
+      'S/ ${totalIngresos.value.toStringAsFixed(2)}'
+    ]);
 
-  pdf.addPage(
-    pw.MultiPage(
-      build: (context) => [
-        // Encabezado con logo y título
-        pw.Row(
-          mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-          children: [
-            pw.Image(logoImage, width: 100),
-            pw.Text(
-              'Reporte Financiero',
-              style: pw.TextStyle(
-                font: roboto,
-                fontSize: 20,
-                fontWeight: pw.FontWeight.bold,
+    // Preparar datos de egresos para PDF
+    List<List<String>> egresosData = egresos
+        .map((item) => [
+              item.name,
+              item.ruc,
+              item.date,
+              item.ispName ?? '',
+              item.amount,
+            ])
+        .toList();
+    egresosData.add([
+      'Total egresos',
+      '',
+      '',
+      '',
+      'S/ ${totalEgresos.value.toStringAsFixed(2)}'
+    ]);
+
+    pdf.addPage(
+      pw.MultiPage(
+        build: (context) => [
+          // Encabezado con logo y título
+          pw.Row(
+            mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+            children: [
+              pw.Image(logoImage, width: 100),
+              pw.Text(
+                'Reporte Financiero',
+                style: pw.TextStyle(
+                  font: roboto,
+                  fontSize: 20,
+                  fontWeight: pw.FontWeight.bold,
+                ),
               ),
+            ],
+          ),
+          pw.SizedBox(height: 20),
+          // Sección Ingresos
+          pw.Text('Ingresos', style: pw.TextStyle(font: roboto, fontSize: 16)),
+          pw.TableHelper.fromTextArray(
+            headers: ['Nombre', 'RUC', 'Fecha', 'Dep.', 'Monto'],
+            data: ingresosData,
+            headerStyle:
+                pw.TextStyle(font: roboto, fontWeight: pw.FontWeight.bold),
+            cellStyle: pw.TextStyle(font: roboto),
+            border: pw.TableBorder.all(
+              width: 0.5,
+              color: PdfColors.black,
+              style: pw.BorderStyle.solid,
             ),
-          ],
-        ),
-        pw.SizedBox(height: 20),
-        // Sección Ingresos
-        pw.Text('Ingresos', style: pw.TextStyle(font: roboto, fontSize: 16)),
-        pw.TableHelper.fromTextArray(
-          headers: ['Nombre', 'RUC', 'Fecha', 'Dep.', 'Monto'],
-          data: ingresosData,
-          headerStyle: pw.TextStyle(font: roboto, fontWeight: pw.FontWeight.bold),
-          cellStyle: pw.TextStyle(font: roboto),
-          border: pw.TableBorder.all(
-            width: 0.5, 
-            color: PdfColors.black,
-            style: pw.BorderStyle.solid,
+            columnWidths: {
+              0: pw.FixedColumnWidth(85), // Ajustar el ancho de la columna
+              1: pw.FixedColumnWidth(65),
+              2: pw.FixedColumnWidth(50),
+              3: pw.FixedColumnWidth(70),
+              4: pw.FixedColumnWidth(60),
+            },
           ),
-          columnWidths: {
-            0: pw.FixedColumnWidth(85), // Ajustar el ancho de la columna
-            1: pw.FixedColumnWidth(65),
-            2: pw.FixedColumnWidth(50),
-            3: pw.FixedColumnWidth(70),
-            4: pw.FixedColumnWidth(60),
-          },
-        ),
-        pw.SizedBox(height: 20),
-        // Sección Egresos
-        pw.Text('Egresos', style: pw.TextStyle(font: roboto, fontSize: 16)),
-        pw.TableHelper.fromTextArray(
-          headers: ['Nombre', 'RUC', 'Fecha', 'ISP', 'Monto'],
-          data: egresosData,
-          headerStyle: pw.TextStyle(font: roboto, fontWeight: pw.FontWeight.bold),
-          cellStyle: pw.TextStyle(font: roboto),
-          border: pw.TableBorder.all(
-            width: 0.5, 
-            color: PdfColors.black,
-            style: pw.BorderStyle.solid,
+          pw.SizedBox(height: 20),
+          // Sección Egresos
+          pw.Text('Egresos', style: pw.TextStyle(font: roboto, fontSize: 16)),
+          pw.TableHelper.fromTextArray(
+            headers: ['Nombre', 'RUC', 'Fecha', 'ISP', 'Monto'],
+            data: egresosData,
+            headerStyle:
+                pw.TextStyle(font: roboto, fontWeight: pw.FontWeight.bold),
+            cellStyle: pw.TextStyle(font: roboto),
+            border: pw.TableBorder.all(
+              width: 0.5,
+              color: PdfColors.black,
+              style: pw.BorderStyle.solid,
+            ),
+            columnWidths: {
+              0: pw.FixedColumnWidth(85), // Ajustar el ancho de la columna
+              1: pw.FixedColumnWidth(65),
+              2: pw.FixedColumnWidth(50),
+              3: pw.FixedColumnWidth(70),
+              4: pw.FixedColumnWidth(60),
+            },
           ),
-          columnWidths: {
-            0: pw.FixedColumnWidth(85), // Ajustar el ancho de la columna
-            1: pw.FixedColumnWidth(65),
-            2: pw.FixedColumnWidth(50),
-            3: pw.FixedColumnWidth(70),
-            4: pw.FixedColumnWidth(60),
-          },
-        ),
-        pw.SizedBox(height: 20),
-        // Sección Saldo
-        pw.Text('Saldo actual', style: pw.TextStyle(font: roboto, fontSize: 16)),
-        pw.TableHelper.fromTextArray(
-          headers: ['Utilidad Total'],
-          data: [
-            ['S/ ${saldoTotal.value.toStringAsFixed(2)}']
-          ],
-          headerStyle: pw.TextStyle(font: roboto, fontWeight: pw.FontWeight.bold),
-          cellStyle: pw.TextStyle(font: roboto),
-        ),
-      ],
-    ),
-  );
-  
-  // Guardar archivo
-  final dir = await getTemporaryDirectory();
-  final file = File('${dir.path}/estado_financiero.pdf');
-  await file.writeAsBytes(await pdf.save());
-  return file;
-}
+          pw.SizedBox(height: 20),
+          // Sección Saldo
+          pw.Text('Saldo actual',
+              style: pw.TextStyle(font: roboto, fontSize: 16)),
+          pw.TableHelper.fromTextArray(
+            headers: ['Utilidad Total'],
+            data: [
+              ['S/ ${saldoTotal.value.toStringAsFixed(2)}']
+            ],
+            headerStyle:
+                pw.TextStyle(font: roboto, fontWeight: pw.FontWeight.bold),
+            cellStyle: pw.TextStyle(font: roboto),
+          ),
+        ],
+      ),
+    );
 
+    // Guardar archivo
+    final dir = await getTemporaryDirectory();
+    final file = File('${dir.path}/estado_financiero.pdf');
+    await file.writeAsBytes(await pdf.save());
+    return file;
+  }
 
   Future exportToExcel() async {
     final excel = Excel.createExcel();

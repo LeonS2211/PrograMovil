@@ -1,45 +1,107 @@
 import 'dart:convert';
-import 'package:flutter/services.dart';
+//import 'package:flutter/services.dart';
 
 import '../models/entities/provider_service.dart';
 import '../models/service_http_response.dart';
-import '../models/entities/provider.dart';
+
+import '../configs/constants.dart';
+import 'package:http/http.dart' as http;
+import '../models/http_error.dart';
 
 class ProviderServiceService {
-  List<ProviderService> _allServices = [];
+  Future<ServiceHttpResponse> fetchByProvider({
+    required String token,
+    required int providerId,
+  }) async {
+    final url = Uri.parse(BASE_URL + 'providerServices/by-provider');
+    final ServiceHttpResponse serviceResponse = ServiceHttpResponse();
 
-  Future<void> _loadData() async {
-    if (_allServices.isEmpty) {
-      final String body = await rootBundle.loadString('assets/jsons/provider_service.json');
-      final List<dynamic> data = jsonDecode(body);
-      _allServices = data
-          .map((map) => ProviderService.fromJson(map as Map<String, dynamic>))
-          .toList();
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({
+          'providerId': providerId,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        //  Lista de servicios encontrada
+        final List<dynamic> responseData = json.decode(response.body);
+        final services = responseData
+            .map((map) => ProviderService.fromJson(map as Map<String, dynamic>))
+            .toList();
+
+        serviceResponse.status = 200;
+        serviceResponse.body = services;
+      } else if (response.statusCode == 404) {
+        //  No hay servicios para este proveedor
+        final responseData = json.decode(response.body);
+        serviceResponse.status = 404;
+        serviceResponse.body = HttpError.fromJson(responseData);
+      } else {
+        //  Otros errores del servidor
+        print('Error en fetchByProvider. Código: ${response.statusCode}');
+        final responseData = json.decode(response.body);
+        serviceResponse.status = response.statusCode;
+        serviceResponse.body = HttpError.fromJson(responseData);
+      }
+    } catch (e) {
+      print('Ocurrió un error: $e');
+      serviceResponse.status = 500;
+      serviceResponse.body = null;
     }
+
+    return serviceResponse;
   }
 
-  Future<ServiceHttpResponse> fetchByProvider(Provider provider) async {
-    await _loadData();
-    final filtered = _allServices
-        .where((service) => service.providerId == provider.id)
-        .toList();
+  Future<ServiceHttpResponse> createNewService({
+    required String token,
+    required ProviderService newService,
+  }) async {
+    final url = Uri.parse(BASE_URL + 'providerServices/create');
+    final ServiceHttpResponse serviceResponse = ServiceHttpResponse();
 
-    return ServiceHttpResponse(status: 200, body: filtered);
-  }
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({
+          "description": newService.description,
+          "dependencyId": newService.dependencyId,
+          "providerId": newService.providerId,
+          "price": newService.price,
+        }),
+      );
 
-  Future<ServiceHttpResponse> createNewService(ProviderService newService) async {
-    await _loadData();
-
-    // Simular que se guarda (en memoria)
-    final exists = _allServices.any((s) =>
-        s.description == newService.description &&
-        s.providerId == newService.providerId);
-
-    if (exists) {
-      return ServiceHttpResponse(status: 409, body: false); // conflicto
+      if (response.statusCode == 201) {
+        //  Creado correctamente
+        serviceResponse.status = 201;
+        serviceResponse.body = true;
+      } else if (response.statusCode == 409) {
+        //  Ya existe un servicio igual
+        final responseData = json.decode(response.body);
+        serviceResponse.status = 409;
+        serviceResponse.body = HttpError.fromJson(responseData);
+      } else {
+        //  Otros errores
+        print('Error al crear servicio. Código: ${response.statusCode}');
+        final responseData = json.decode(response.body);
+        serviceResponse.status = response.statusCode;
+        serviceResponse.body = HttpError.fromJson(responseData);
+      }
+    } catch (e) {
+      print('Ocurrió un error: $e');
+      serviceResponse.status = 500;
+      serviceResponse.body = null;
     }
 
-    _allServices.add(newService);
-    return ServiceHttpResponse(status: 201, body: true);
+    return serviceResponse;
   }
 }

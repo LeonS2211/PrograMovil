@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import '../models/service_http_response.dart';
 import '../models/entities/isp.dart';
 import 'package:http/http.dart' as http;
+import '../configs/constants.dart';
 
 
 class IspService {
@@ -31,12 +32,20 @@ class IspService {
     }
   }
 
-Future<ServiceHttpResponse?> fetchAllNamesWithId() async {
+Future<ServiceHttpResponse?> fetchAllNamesWithId(String token) async {
   ServiceHttpResponse serviceResponse = ServiceHttpResponse();
 
   try {
     print("🔄 Intentando conectarse al backend...");
-    final response = await http.get(Uri.parse('http://10.0.2.2:3000/isps'));
+    
+    final response = await http.get(
+      Uri.parse(BASE_URL + 'isps'),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json', // opcional pero recomendable
+      },
+    );
+
     print("🌐 Status Code: ${response.statusCode}");
     print("📦 Body crudo: ${response.body}");
 

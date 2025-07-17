@@ -130,8 +130,6 @@ class FinancialStatementController extends GetxController {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('jwt_token');
       print('Cargando ingresos para provider ID: ${provider.id}');
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? token = prefs.getString('jwt_token');
       final providerServicesResponse =
           await providerServiceService.fetchByProvider(token!, provider.id!);
       if (providerServicesResponse.status == 200) {
@@ -165,12 +163,12 @@ class FinancialStatementController extends GetxController {
               String dependencyName = '';
               String companyRuc = '';
 
-              if (dependencyResponse?.status == 200) {
-                final Dependency dependency = dependencyResponse!.body;
+              if (dependencyResponse.status == 200) {
+                final Dependency dependency = dependencyResponse.body;
                 dependencyName = dependency.name;
 
                 final companyResponse = await companyService
-                    .getCompanyRucById(dependency.companyId,token!);
+                    .getCompanyRucById(dependency.companyId,token);
                     
                 if (companyResponse?.status == 200) {
                   companyRuc = companyResponse!.body;
@@ -207,7 +205,7 @@ class FinancialStatementController extends GetxController {
       String? token = prefs.getString('jwt_token');
 
       final ispServicesResponse =
-          await ispServiceService.fetchByProvider(provider);
+          await ispServiceService.fetchByProvider(provider, token!);
       if (ispServicesResponse.status == 200) {
         final List<IspService> ispServices = ispServicesResponse.body;
 
@@ -217,7 +215,7 @@ class FinancialStatementController extends GetxController {
         }
 
         final invoicesResponse =
-            await invoiceService.getIspInvoice(token!, ispServices);
+            await invoiceService.getIspInvoice(token, ispServices);
         if (invoicesResponse.status == 200) {
           final List<Invoice> invoices = invoicesResponse.body;
           List<FinancialItem> egresosTemp = [];
@@ -245,8 +243,8 @@ class FinancialStatementController extends GetxController {
               final dependencyResponse = await dependencyService
                   .getDependencyById(service.providerId, token!);
               String dependencyName = '';
-              if (dependencyResponse?.status == 200) {
-                final Dependency dependency = dependencyResponse!.body;
+              if (dependencyResponse.status == 200) {
+                final Dependency dependency = dependencyResponse.body;
                 dependencyName = dependency.name;
               }
 

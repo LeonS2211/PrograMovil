@@ -44,15 +44,15 @@ class MyApp extends StatelessWidget {
       theme: materialTheme.light(),
       darkTheme: materialTheme.dark(),
       themeMode: ThemeMode.system,
-      initialRoute: '/registerService',
+      initialRoute: '/sign-in',
       routes: {
-        //'/sign-in': (context) => SignInPage(),
-        //'/select-company': (context) => SelectCompanyPage(),
-        //'/financial-statement': (context) => FinancialStatementPage(),
-        //'/invoices': (context) => InvoicesPage(),
+        '/sign-in': (context) => SignInPage(),
+        '/select-company': (context) => SelectCompanyPage(),
+        '/financial-statement': (context) => FinancialStatementPage(),
+        '/invoices': (context) => InvoicesPage(),
         '/addService': (context) => AddServicePage(),
         '/registerService': (context) => RegisterServicePage(),
-        //'/view-companies': (context) => ViewCompaniesPage(),
+        '/view-companies': (context) => ViewCompaniesPage(),
         '/view-contacts': (context) {
           final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
           return ViewContactsPage(

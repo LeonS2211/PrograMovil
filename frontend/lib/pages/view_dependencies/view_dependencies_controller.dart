@@ -1,7 +1,6 @@
 import 'package:get/get.dart';
 import 'package:helloworld/models/entities/dependency.dart';
 import 'package:helloworld/services/dependency_service.dart';
-import 'package:helloworld/models/entities/company.dart';
 import 'package:helloworld/selected_provider_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

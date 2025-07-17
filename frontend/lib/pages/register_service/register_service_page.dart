@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'register_service_controller.dart';
 import '../../components/custom_nav_bar.dart';
-import 'package:helloworld/pages/add_service/add_service_page.dart';
 
 class RegisterServicePage extends StatelessWidget {
   RegisterServiceController control = Get.put(RegisterServiceController());

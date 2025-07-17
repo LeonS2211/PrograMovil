@@ -22,6 +22,23 @@ router.post("/sign-in", async (req, res) => {
       };
       status = 400;
     } else {
+      /*async function generateHashes() {
+  const passwords = [
+    'password123',   // 👈 primer password
+    'password456',     // 👈 segundo password
+    'password789'   // 👈 tercer password
+  ];
+
+  const saltRounds = 10; // Nivel de complejidad
+
+  for (let pass of passwords) {
+    const hash = await bcrypt.hash(pass, saltRounds);
+    console.log(`Password: ${pass}`);
+    console.log(`Hash: ${hash}\n`);
+  }
+}
+
+generateHashes();*/
       const admin = await Admin.findOne({
         attributes: ["id", "username", "password"],
         where: { username: username },

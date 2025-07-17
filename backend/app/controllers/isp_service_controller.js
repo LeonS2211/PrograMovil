@@ -2,23 +2,41 @@ const express = require('express');
 const ISPService = require('../models/isp_service');
 const router = express.Router();
 const { jwtMiddleware } = require("../../config/middlewares");
-// GET /isp_services?provider_id=ID (opcional)
-router.get('/', jwtMiddleware, async (req, res) => {
+// GET /ispServices/provider/:provider_id (opcional)
+router.get('/provider/:provider_id', jwtMiddleware, async (req, res) => {
+ const { provider_id } = req.params;  // extraemos provider_id desde la URL
+
   try {
-    const providerId = parseInt(req.query.provider_id, 10);
     let services;
-    if (providerId) {
-      services = await ISPService.findAll({ where: { provider_id: providerId } });
+
+    if (provider_id) {
+      // Filtrar solo por el provider_id recibido
+      services = await ISPService.findAll({
+        where: { provider_id }
+      });
     } else {
+      // Si no viene provider_id, devolver todos
       services = await ISPService.findAll();
     }
+
+    if (!services || services.length === 0) {
+      return res.status(404).json({
+        message: "No se encontraron servicios para el proveedor especificado",
+        detail: "",
+      });
+    }
+
     res.status(200).json(services);
-  } catch (err) {
-    res.status(500).json({ message: 'Error al obtener servicios', error: err });
+
+  } catch (error) {
+    console.error("❌ Error al obtener servicios ISP:", error);
+    res.status(500).json({
+      message: "Error al obtener servicios",
+      detail: error.message,
+    });
   }
 });
-
-// GET /isp_services/:id
+// GET /ispServices/:id
 router.get('/:id', jwtMiddleware, async (req, res) => {
   try {
     const id = parseInt(req.params.id);
@@ -33,7 +51,7 @@ router.get('/:id', jwtMiddleware, async (req, res) => {
   }
 });
 
-// POST /isp_services
+// POST /ispServices
 router.post('/', jwtMiddleware, async (req, res) => {
   const { isp_id, provider_id, description, cost, pay_code } = req.body;
   console.log("📥 POST /isp_services - Body recibido:", req.body);

@@ -35,7 +35,7 @@ class ViewCompaniesController extends GetxController {
       List<Address> loadedAddresses = [];
       for (var company in companies) {
         final ServiceHttpResponse? addressResponse =
-            await _addressService.getAddress(company, token!);
+            await _addressService.getAddress(company, token);
 
         // Primero comprueba que no sea null
         if (addressResponse != null &&

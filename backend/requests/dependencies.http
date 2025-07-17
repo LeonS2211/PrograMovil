@@ -1,72 +1,27 @@
 @baseUrl = http://localhost:3000
 @session = mysession=MTc0OTMyNjc1M3xEWDhFQVFMX2dBQUJFQUVRQUFBb180QUFBUVp6ZEhKcGJtY01DQUFHYzNSaGRIVnpCbk4wY21sdVp3d0tBQWhoWTNScGRtRjBaUT09fDEwMNRr-eTvIKdIDTSfFrm61NAAZ06WflPGf2t7gHIC
 
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbjEiLCJpYXQiOjE3NTI3MzY4MzksImV4cCI6MTc1Mjc0MDQzOX0.pDhMKAxo1PkKuPv9AAr-CjaH9Hw4ECTSe6rTTsd3_k4
 
 ### Obtener todas las dependencias
 GET {{baseUrl}}/dependencies
-Content-Type: application/json
 Cookie: {{session}}
+Authorization: Bearer {{token}}
 
 ### Obtener una dependencia por ID
 GET {{baseUrl}}/dependencies/20
-Content-Type: application/json
 Cookie: {{session}}
+Authorization: Bearer {{token}}
 
 
 ### Obtener dependencias por providerId y companyId
 GET {{baseUrl}}/dependencies/provider/1/company/8
-Content-Type: application/json
 Cookie: {{session}}
+Authorization: Bearer {{token}}
 
-
-### Crear nueva dependencia
-POST {{baseUrl}}/dependencies
-Content-Type: application/json
-Cookie: {{session}}
-
-{
-  "provider_id": 6,
-  "company_id": 4,
-  "name": "Dependencia REST2",
-  "sign_date": "2023-02-02",
-  "validity_time": "5 años",
-  "termination_date": "2028-10-10",
-  "anniversary": "10-10",
-  "equipment": " 5 Creada equipment"
-}
-
-###
-
-### Crear dependencia con datos incompletos (Status 400 esperado)
-POST {{baseUrl}}/dependencies
-Content-Type: application/json
-Cookie: {{session}}
-
-{
-  "provider_id": 1
-}
-
-
-### Actualizar una dependencia
-PUT {{baseUrl}}/dependencies/21
-Content-Type: application/json
-Cookie: {{session}}
-
-{
-  "name": "Nombre actualizado",
-  "equipment": "Editado sin autenticación"
-}
-
-###
-
-### Eliminar una dependencia
-DELETE {{baseUrl}}/dependencies/21
-Content-Type: application/json
-Cookie: {{session}}
-
-###
 
 ### Obtener nombres de proveedores
 GET {{baseUrl}}/dependencies/providers/names/
 Content-Type: application/json
 Cookie: {{session}}
+Authorization: Bearer {{token}}

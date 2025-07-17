@@ -1,9 +1,9 @@
 const express = require('express');
 const ISPService = require('../models/isp_service');
 const router = express.Router();
-
+const { jwtMiddleware } = require("../../config/middlewares");
 // GET /isp_services?provider_id=ID (opcional)
-router.get('/', async (req, res) => {
+router.get('/', jwtMiddleware, async (req, res) => {
   try {
     const providerId = parseInt(req.query.provider_id, 10);
     let services;
@@ -19,7 +19,7 @@ router.get('/', async (req, res) => {
 });
 
 // GET /isp_services/:id
-router.get('/:id', async (req, res) => {
+router.get('/:id', jwtMiddleware, async (req, res) => {
   try {
     const id = parseInt(req.params.id);
     const service = await ISPService.findByPk(id);
@@ -34,7 +34,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // POST /isp_services
-router.post('/', async (req, res) => {
+router.post('/', jwtMiddleware, async (req, res) => {
   const { isp_id, provider_id, description, cost, pay_code } = req.body;
   if (!isp_id || !provider_id || !description || !cost || !pay_code) {
     return res.status(400).json({ message: 'Faltan campos obligatorios' });

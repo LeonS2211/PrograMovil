@@ -1,9 +1,10 @@
 const express = require("express");
 const Provider = require("../models/provider"); // Importamos el modelo Provider
 const router = express.Router();
+const { jwtMiddleware } = require("../../config/middlewares");
 
 // POST: Fetch providers by IDs
-router.post("/fetch-by-ids", async (req, res) => {
+router.post("/fetch-by-ids", jwtMiddleware, async (req, res) => {
   const { ids } = req.body; // Recibimos los IDs de los proveedores
 
   let response = {};

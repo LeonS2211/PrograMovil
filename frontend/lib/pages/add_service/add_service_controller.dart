@@ -9,7 +9,8 @@ import 'package:helloworld/models/entities/provider_service.dart';
 import 'package:helloworld/services/dependency_service.dart';
 import 'package:helloworld/services/provider_service_service.dart';
 import 'package:helloworld/services/isp_service_service.dart' as service;
-import 'package:helloworld/services/isp_service.dart'as service;
+import 'package:helloworld/services/isp_service.dart' as service;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AddServiceController extends GetxController {
   // Controladores para la versión simple
@@ -44,9 +45,9 @@ class AddServiceController extends GetxController {
   bool validarCampos(bool isp) {
     if (isp) {
       return descripcionController.text.isNotEmpty &&
-             precioController.text.isNotEmpty &&
-             codigoPagoController.text.isNotEmpty &&
-             selectedIsp.value != null;
+          precioController.text.isNotEmpty &&
+          codigoPagoController.text.isNotEmpty &&
+          selectedIsp.value != null;
     } else {
       return descripcion.text.isNotEmpty && precio.text.isNotEmpty;
     }
@@ -117,7 +118,8 @@ class AddServiceController extends GetxController {
     }
   }
 
-  Future<void> guardarNuevoServicio(BuildContext context, int providerId) async {
+  Future<void> guardarNuevoServicio(
+      BuildContext context, int providerId) async {
     if (!validarCampos(true)) {
       Get.snackbar('Error', 'Todos los campos son obligatorios.',
           backgroundColor: Colors.redAccent, colorText: Colors.white);
@@ -134,7 +136,8 @@ class AddServiceController extends GetxController {
         payCode: codigoPagoController.text.trim(),
       );
 
-      final response = await service.IspServiceService().createNewService(ispService);
+      final response =
+          await service.IspServiceService().createNewService(ispService);
 
       if (response.status == 201) {
         mostrarDialogosConfirmacion(context, true);
@@ -151,7 +154,8 @@ class AddServiceController extends GetxController {
     }
   }
 
-  Future<void> guardarNuevoProviderService(BuildContext context, int providerId, int dependencyId) async {
+  Future<void> guardarNuevoProviderService(
+      BuildContext context, int providerId, int dependencyId) async {
     if (!validarCampos(false)) {
       Get.snackbar('Error', 'Todos los campos son obligatorios.',
           backgroundColor: Colors.redAccent, colorText: Colors.white);
@@ -167,7 +171,8 @@ class AddServiceController extends GetxController {
         price: double.tryParse(precio.text.trim()) ?? 0.0,
       );
 
-      final response = await ProviderServiceService().createNewService(nuevoServicio);
+      final response =
+          await ProviderServiceService().createNewService(nuevoServicio);
 
       if (response.status == 201) {
         mostrarDialogosConfirmacion(context, false);
@@ -223,8 +228,12 @@ class AddServiceController extends GetxController {
     }
 
     try {
+      // Obtener el token desde SharedPreferences
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('jwt_token');
+
       final dependencyService = DependencyService();
-      final response = await dependencyService.fetchByProviderAndCompany(currentProvider!, currentCompany!);
+      final response = await dependencyService.fetchAllProviderNames(token!);
 
       if (response?.status == 200 && response?.body != null) {
         dependencyList.assignAll(response!.body as List<Dependency>);
@@ -256,10 +265,3 @@ class AddServiceController extends GetxController {
     super.onClose();
   }
 }
-
-
-  
-
-
-
-

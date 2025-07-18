@@ -19,6 +19,7 @@ import '../../models/entities/invoice.dart';
 import '../../models/entities/dependency.dart';
 import '../../models/entities/isp.dart';
 import '../../selected_provider_controller.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 /*
 // Modelo para estructurar los datos financieros
 class FinancialItem {
@@ -417,6 +418,8 @@ class FinancialStatementController extends GetxController {
 
   Future<void> _loadIngresos(Provider provider) async {
     try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('jwt_token');
       print('Cargando ingresos para provider ID: ${provider.id}');
 
       final providerServicesResponse =
@@ -454,7 +457,8 @@ class FinancialStatementController extends GetxController {
                 dependencyName = dependency.name;
 
                 final companyResponse = await companyService
-                    .getCompanyRucById(dependency.companyId);
+                    .getCompanyRucById(dependency.companyId,token!);
+                    
                 if (companyResponse?.status == 200) {
                   companyRuc = companyResponse!.body;
                 }

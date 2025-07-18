@@ -1,1 +1,1 @@
-final String BASE_URL = 'http://127.0.0.1:3000/';
+final String BASE_URL = 'http://192.168.18.17:3000/';

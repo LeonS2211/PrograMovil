@@ -1,32 +1,55 @@
 import 'dart:convert';
+import 'package:http/http.dart' as http;
 
-import 'package:flutter/services.dart';
+import '../configs/constants.dart';
+import '../models/http_error.dart';
 import '../models/service_http_response.dart';
 import '../models/entities/admin.dart';
+import '../models/responses/user_token.dart'; // Importa tu nuevo modelo
 
 class AdminService {
-Future<ServiceHttpResponse?> signIn(Admin inputAdmin) async {
-  ServiceHttpResponse serviceResponse = ServiceHttpResponse();
+  Future<ServiceHttpResponse?> signIn(Admin inputAdmin) async {
+    ServiceHttpResponse serviceResponse = ServiceHttpResponse();
+    final url = Uri.parse(BASE_URL + 'admins/sign-in'); // Asegúrate de que coincida
 
-  final String body =
-      await rootBundle.loadString('assets/jsons/admin.json');
-  final List<dynamic> data = jsonDecode(body);
+    final body = {
+      'username': inputAdmin.username,
+      'password': inputAdmin.password,
+    };
 
-  final List<Admin> admins =
-      data.map((map) => Admin.fromJson(map as Map<String, dynamic>)).toList();
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode(body),
+      );
+      print('👉 URL: $url');
+      print('👉 Body enviado: $body');
+      print('👉 Status Code: ${response.statusCode}');
+      print('👉 Response Body: ${response.body}');
 
-final matches = admins.where((admin) =>
-  admin.username == inputAdmin.username &&
-  admin.password == inputAdmin.password).toList();
 
-if (matches.isNotEmpty) {
-  serviceResponse.status = 200;
-  serviceResponse.body = matches.first;
-} else {
-  serviceResponse.status = 401;
-  serviceResponse.body = null;
-}
-  return serviceResponse;
-}
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+        Admin admin = Admin.fromJson(responseData["admin"]);
+        final String? token = responseData['token'] as String?;
 
+        UserToken adminToken = UserToken(admin: admin, token: token!);
+        print(token);
+        serviceResponse.status = 200;
+        serviceResponse.body = adminToken;
+      } else {
+        final responseData = json.decode(response.body);
+        HttpError error = HttpError.fromJson(responseData);
+        serviceResponse.status = response.statusCode;
+        serviceResponse.body = error;
+      }
+    } catch (e) {
+      print('Ocurrió un error: $e');
+      serviceResponse.status = 500;
+      serviceResponse.body = null;
+    }
+
+    return serviceResponse;
+  }
 }

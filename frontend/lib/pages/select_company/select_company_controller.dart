@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import '../../services/provider_service.dart';
 import '../../models/entities/provider.dart';
 import '../../selected_provider_controller.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SelectCompanyController extends GetxController {
   var selectedCompany = RxnString(); // Empresa seleccionada por nombre
@@ -16,7 +17,9 @@ class SelectCompanyController extends GetxController {
 
   /// Cargar los proveedores usando sus IDs
   Future<void> loadProvidersByIds(List<int> providerIds) async {
-    final response = await ProviderService().fetchByIds(providerIds);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('jwt_token');
+    final response = await ProviderService().fetchByIds(providerIds,token!);
     if (response?.status == 200) {
       _filteredProviders = List<Provider>.from(response!.body);
       companies.value = _filteredProviders.map((p) => p.name).toList();

@@ -8,7 +8,7 @@ import '../models/entities/provider.dart';
 class ProviderService {
   Future<ServiceHttpResponse?> fetchByIds(List<int> ids, String token) async {
     ServiceHttpResponse serviceResponse = ServiceHttpResponse();
-    final url = Uri.parse(BASE_URL + 'providers/by-ids'); // cambia si tu endpoint es otro
+    final url = Uri.parse(BASE_URL + 'providers/fetch-by-ids'); // cambia si tu endpoint es otro
 
     try {
       final response = await http.post(

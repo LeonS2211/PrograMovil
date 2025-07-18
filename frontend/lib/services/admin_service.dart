@@ -23,6 +23,11 @@ class AdminService {
         headers: {'Content-Type': 'application/json'},
         body: json.encode(body),
       );
+      print('👉 URL: $url');
+      print('👉 Body enviado: $body');
+      print('👉 Status Code: ${response.statusCode}');
+      print('👉 Response Body: ${response.body}');
+
 
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
@@ -30,6 +35,7 @@ class AdminService {
         final String? token = responseData['token'] as String?;
 
         UserToken adminToken = UserToken(admin: admin, token: token!);
+        print(token);
         serviceResponse.status = 200;
         serviceResponse.body = adminToken;
       } else {

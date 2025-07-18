@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:helloworld/models/entities/dependency.dart';
 import 'package:helloworld/services/dependency_service.dart';
+import 'package:helloworld/models/entities/company.dart';
 import 'package:helloworld/selected_provider_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -11,6 +12,7 @@ class ViewDependenciesController extends GetxController {
   final DependencyService _dependencyService = DependencyService();
   final provider = Get.find<SelectedProviderController>().provider;
 
+  /// Cargar dependencias según provider y company como ya tenías
   Future<void> loadDependencies(String companyId) async {
     try {
       isLoading.value = true;

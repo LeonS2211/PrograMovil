@@ -233,7 +233,7 @@ class FinancialStatementController extends GetxController {
               if (ispResponse?.status == 200) {
                 final Isp isp = ispResponse!.body;
                 ispName = isp.name;
-                ispRuc = isp.ruc;
+                ispRuc = isp.ruc ?? '';
               }
 
               final dependencyResponse = await dependencyService

@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import '../models/service_http_response.dart';
 import '../models/entities/isp.dart';
+import 'package:http/http.dart' as http;
+
 
 class IspService {
   List<Isp> services = [];
@@ -32,25 +34,36 @@ class IspService {
 Future<ServiceHttpResponse?> fetchAllNamesWithId() async {
   ServiceHttpResponse serviceResponse = ServiceHttpResponse();
 
-  // Cargar el archivo JSON
-  final String lectura = await rootBundle.loadString('assets/jsons/isp.json');
-  final List<dynamic> data = jsonDecode(lectura);
+  try {
+    print("🔄 Intentando conectarse al backend...");
+    final response = await http.get(Uri.parse('http://10.0.2.2:3000/isps'));
+    print("🌐 Status Code: ${response.statusCode}");
+    print("📦 Body crudo: ${response.body}");
 
-  // Convertir los datos JSON en una lista de objetos Isp
-  List<Isp> names = data.map((e) => Isp.fromJson(e)).toList();
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(response.body);
 
-  // Crear una lista de mapas con los valores de id y name
-  List<Map<String, dynamic>> ispNamesWithId = names.map((isp) {
-    return {
-      'id': isp.id,  // Obtener el id
-      'name': isp.name  // Obtener el name
-    };
-  }).toList();
+      // DEBUG NUEVO
+      print("🔍 DATA decodificada: $data");
 
-  // Configurar la respuesta del servicio
-  serviceResponse.status = 200;
-  serviceResponse.body = ispNamesWithId;
+      serviceResponse.status = 200;
+      serviceResponse.body = data;
+      print("✅ ISPs cargados correctamente, cantidad: ${data.length}");
+    } else {
+      print("⚠️ Error de status code: ${response.statusCode}");
+      serviceResponse.status = response.statusCode;
+      serviceResponse.body = null;
+    }
+  } catch (e) {
+    print("❌ Error de conexión: $e");
+    serviceResponse.status = 500;
+    serviceResponse.body = null;
+  }
 
   return serviceResponse;
 }
+
+
+
 }
+

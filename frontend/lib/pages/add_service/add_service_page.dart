@@ -8,12 +8,14 @@ import 'package:flutter/services.dart';
 
 
 
+
 final TextEditingController descripcionController = TextEditingController();
 final TextEditingController precioController = TextEditingController();
 final TextEditingController codigoPago = TextEditingController();
 
 final TextEditingController descripcion = TextEditingController();
 final TextEditingController precio = TextEditingController();
+
 
 class AddServicePage extends StatelessWidget {
   AddServiceController control = Get.put(AddServiceController());
@@ -26,95 +28,92 @@ class AddServicePage extends StatelessWidget {
 Widget _botton(BuildContext context) {
   return Container(
     margin: EdgeInsets.only(top: 30),
-    child: Column(
-      children: [
-        Center(
-          child: ElevatedButton(
-            onPressed: () {
-              // Mostrar primer modal
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    backgroundColor: const Color.fromARGB(255, 240, 161, 225),
-                    title: Text(
-                      '¿Estás seguro de que \n la información es \n correcta?',
-                      textAlign: TextAlign.center,
-                    ),
-                    actionsAlignment: MainAxisAlignment.center,
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          control.guardarNuevoProviderService(context, proveedor.id!, 2);
-                          Navigator.of(context).pop(true); // Cierra primer modal y devuelve true
-                        },
-                        child: Text('Confirmar'),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop(false); // Cierra primer modal y devuelve false
-                        },
-                        child: Text('Cancelar'),
-                      ),
-                    ],
-                  );
-                },
-              ).then((confirmed) {
-                if (confirmed == true) {
-                  // Mostrar segundo modal solo si confirmó
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        backgroundColor: const Color.fromARGB(255, 240, 161, 225),
-                        title: Text(
-                          'Información registrada \n correctamente',
-                          textAlign: TextAlign.center,
-                        ),
-                        actionsAlignment: MainAxisAlignment.center,
-                        actions: [
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                  descripcion.clear();
-                                  precio.clear();
-                                },
-                                child: Text('Registrar otro'),
-                              ),
-                              SizedBox(width: 20),
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                  control.gotoRegisterService(context, true);
-                                },
-                                child: Text('Volver'),
+    child: Center(
+      child: ElevatedButton(
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                backgroundColor: Color.fromARGB(255, 240, 161, 225),
+                title: Text(
+                  '¿Estás seguro de que \n la información es \n correcta?',
+                  textAlign: TextAlign.center,
+                ),
+                actionsAlignment: MainAxisAlignment.center,
+                actions: [
+                  TextButton(
+                    onPressed: () async {
+                      Navigator.of(context).pop(); // Cierra modal de confirmación
+
+                      // Ejecutar POST
+                      await control.guardarNuevoProviderService(context, proveedor.id!, 2);
+
+                      // Mostrar modal de "registrado correctamente"
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            backgroundColor: Color.fromARGB(255, 240, 161, 225),
+                            title: Text(
+                              'Información registrada \n correctamente',
+                              textAlign: TextAlign.center,
+                            ),
+                            actionsAlignment: MainAxisAlignment.center,
+                            actions: [
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                      // Limpiar campos correctamente
+                                      control.descripcion.clear();
+                                      control.precio.clear();
+                                    },
+                                    child: Text('Registrar otro'),
+                                  ),
+                                  SizedBox(width: 20),
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                      control.gotoRegisterService(context, true);
+                                    },
+                                    child: Text('Volver'),
+                                  ),
+                                ],
                               ),
                             ],
-                          ),
-                        ],
+                          );
+                        },
                       );
                     },
-                  );
-                }
-              });
+                    child: Text('Confirmar'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('Cancelar'),
+                  ),
+                ],
+              );
             },
-            child: Text('CREAR'),
-            style: ElevatedButton.styleFrom(
-              minimumSize: Size(250, 60),
-              backgroundColor: const Color.fromARGB(255, 157, 200, 236),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
+          );
+        },
+        child: Text('CREAR'),
+        style: ElevatedButton.styleFrom(
+          minimumSize: Size(250, 60),
+          backgroundColor: Color.fromARGB(255, 157, 200, 236),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
           ),
         ),
-      ],
+      ),
     ),
   );
 }
+
 
   Widget _Registro(BuildContext context) {
     return Container(
@@ -151,27 +150,37 @@ Widget _botton(BuildContext context) {
             height: 60,
           ),
 
-Obx(() => DropdownButtonFormField<int>(
-      decoration: InputDecoration(
-        labelText: 'Dependencia',
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        filled: true,
-        fillColor: const Color.fromARGB(255, 211, 210, 210),
+Obx(() {
+  if (control.ispList.isEmpty) {
+    return Text("No hay ISPs disponibles.");
+  }
+
+  return DropdownButtonFormField<int>(
+    decoration: InputDecoration(
+      labelText: 'ISP',
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
       ),
-      items: control.ispList.map((isp) {
-        return DropdownMenuItem<int>(
-          value: isp.id,
-          child: Text(isp.name),
-        );
-      }).toList(),
-      onChanged: (int? nuevoValor) {
-        control.selectedIspId.value = nuevoValor;
-        print('Seleccionaste: $nuevoValor');
-      },
-      value: control.selectedIspId.value,
-    )),
+      filled: true,
+      fillColor: const Color.fromARGB(255, 211, 210, 210),
+    ),
+    items: control.ispList.map((isp) {
+      return DropdownMenuItem<int>(
+        value: isp.id,
+        child: Text(isp.name),
+      );
+    }).toList(),
+    onChanged: (int? nuevoValor) {
+      control.selectedIspId.value = nuevoValor;
+      print('Seleccionaste ISP con ID: $nuevoValor');
+    },
+    value: control.selectedIspId.value,
+  );
+}),
+
+
+
+
 
 
                     SizedBox(
@@ -273,97 +282,95 @@ Obx(() => DropdownButtonFormField<int>(
 Widget _botton2(BuildContext context) {
   return Container(
     margin: EdgeInsets.only(top: 30),
-    child: Column(
-      children: [
-        Center(
-          child: ElevatedButton(
-            onPressed: () {
-              // Mostrar primer modal
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    backgroundColor: const Color.fromARGB(255, 240, 161, 225),
-                    title: Text(
-                      '¿Estás seguro de que \n la información es \n correcta?',
-                      textAlign: TextAlign.center,
-                    ),
-                    actionsAlignment: MainAxisAlignment.center,
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          control.guardarNuevoServicio(context, proveedor.id!);
-                          Navigator.of(context).pop(true); // Cierra primer modal y devuelve true
-                        },
-                        child: Text('Confirmar'),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop(false); // Cierra primer modal y devuelve false
-                        },
-                        child: Text('Cancelar'),
-                      ),
-                    ],
-                  );
-                },
-              ).then((confirmed) {
-                if (confirmed == true) {
-                  // Mostrar segundo modal solo si confirmó
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        backgroundColor: const Color.fromARGB(255, 240, 161, 225),
-                        title: Text(
-                          'Información registrada \n correctamente',
-                          textAlign: TextAlign.center,
-                        ),
-                        actionsAlignment: MainAxisAlignment.center,
-                        actions: [
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                      descripcionController.clear();
-                                      precioController.clear();
-                                      codigoPago.clear();
+    child: Center(
+      child: ElevatedButton(
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                backgroundColor: Color.fromARGB(255, 240, 161, 225),
+                title: Text(
+                  '¿Estás seguro de que \n la información es \n correcta?',
+                  textAlign: TextAlign.center,
+                ),
+                actionsAlignment: MainAxisAlignment.center,
+                actions: [
+                  TextButton(
+                    onPressed: () async {
+                      Navigator.of(context).pop(); // Cierra modal de confirmación
 
-                                },
-                                child: Text('Registrar otro'),
-                              ),
-                              SizedBox(width: 20),
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                  control.gotoRegisterService(context, true);
-                                },
-                                child: Text('Volver'),
+                      // Ejecutar POST
+                      await control.guardarNuevoServicio(context, proveedor.id!);
+
+
+                      // Mostrar modal de "registrado correctamente"
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            backgroundColor: Color.fromARGB(255, 240, 161, 225),
+                            title: Text(
+                              'Información registrada \n correctamente',
+                              textAlign: TextAlign.center,
+                            ),
+                            actionsAlignment: MainAxisAlignment.center,
+                            actions: [
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                      // Limpiar campos correctamente
+                                      control.descripcionController.clear();
+                                      control.precioController.clear();
+                                      control.codigoPagoController.clear();
+
+                                    },
+                                    child: Text('Registrar otro'),
+                                  ),
+                                  SizedBox(width: 20),
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                      control.gotoRegisterService(context, true);
+                                    },
+                                    child: Text('Volver'),
+                                  ),
+                                ],
                               ),
                             ],
-                          ),
-                        ],
+                          );
+                        },
                       );
                     },
-                  );
-                }
-              });
+                    child: Text('Confirmar'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('Cancelar'),
+                  ),
+                ],
+              );
             },
-            child: Text('CREAR'),
-            style: ElevatedButton.styleFrom(
-              minimumSize: Size(250, 60),
-              backgroundColor: const Color.fromARGB(255, 157, 200, 236),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
+          );
+        },
+        child: Text('CREAR'),
+        style: ElevatedButton.styleFrom(
+          minimumSize: Size(250, 60),
+          backgroundColor: Color.fromARGB(255, 157, 200, 236),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
           ),
         ),
-      ],
+      ),
     ),
   );
 }
+
 
 
 
@@ -387,7 +394,7 @@ Widget _botton2(BuildContext context) {
       child: Column(
         children: [
           TextField(
-            controller: descripcionController,
+            controller: control.descripcionController,
             decoration: InputDecoration(
               labelText: 'Descripcion',
               border: OutlineInputBorder(
@@ -402,27 +409,33 @@ Widget _botton2(BuildContext context) {
             height: 30,
           ),
 
-Obx(() => DropdownButtonFormField<int>(
-      decoration: InputDecoration(
-        labelText: 'Dependencia',
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        filled: true,
-        fillColor: const Color.fromARGB(255, 211, 210, 210),
+Obx(() {
+  if (control.ispList.isEmpty) {
+    return Text("No hay ISPs disponibles.");
+  }
+
+  return DropdownButtonFormField<int>(
+    decoration: InputDecoration(
+      labelText: 'ISP',
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
       ),
-      items: control.ispList.map((isp) {
-        return DropdownMenuItem<int>(
-          value: isp.id,
-          child: Text(isp.name),
-        );
-      }).toList(),
-      onChanged: (int? nuevoValor) {
-        control.selectedIspId.value = nuevoValor;
-        print('Seleccionaste: $nuevoValor');
-      },
-      value: control.selectedIspId.value,
-    )),
+      filled: true,
+      fillColor: const Color.fromARGB(255, 211, 210, 210),
+    ),
+    items: control.ispList.map((isp) {
+      return DropdownMenuItem<int>(
+        value: isp.id,
+        child: Text(isp.name),
+      );
+    }).toList(),
+    onChanged: (int? nuevoValor) {
+      control.selectedIspId.value = nuevoValor;
+      print('Seleccionaste ISP con ID: $nuevoValor');
+    },
+    value: control.selectedIspId.value,
+  );
+}),
 
 
 
@@ -431,7 +444,7 @@ Obx(() => DropdownButtonFormField<int>(
           ),
 
           TextField(
-            controller: precioController,
+            controller: control.precioController,
             keyboardType: TextInputType.number,
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             decoration: InputDecoration(
@@ -449,7 +462,7 @@ Obx(() => DropdownButtonFormField<int>(
           ),
 
           TextField(
-            controller: codigoPago,
+            controller: control.codigoPagoController,
             keyboardType: TextInputType.number,
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             decoration: InputDecoration(
@@ -533,6 +546,9 @@ Obx(() => DropdownButtonFormField<int>(
   @override
   Widget build(BuildContext context) {
     isp = ModalRoute.of(context)?.settings.arguments as bool? ?? false;
+    print("ISP List length: ${control.ispList.length}");
+    print("ISP List data: ${control.ispList}");
+
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (bool didPop, Object? result) {

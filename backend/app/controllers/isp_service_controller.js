@@ -36,9 +36,13 @@ router.get('/:id', jwtMiddleware, async (req, res) => {
 // POST /isp_services
 router.post('/', jwtMiddleware, async (req, res) => {
   const { isp_id, provider_id, description, cost, pay_code } = req.body;
+  console.log("📥 POST /isp_services - Body recibido:", req.body);
+
   if (!isp_id || !provider_id || !description || !cost || !pay_code) {
+    console.log("⚠️ POST /isp_services - Faltan campos obligatorios");
     return res.status(400).json({ message: 'Faltan campos obligatorios' });
   }
+  
   try {
     const newService = await ISPService.create({
       isp_id,
@@ -47,8 +51,10 @@ router.post('/', jwtMiddleware, async (req, res) => {
       cost,
       pay_code
     });
+    console.log("✅ POST /isp_services - Servicio creado correctamente:", newService);
     res.status(201).json(newService);
   } catch (err) {
+    console.error("❌ POST /isp_services - Error al crear servicio:", err);
     res.status(500).json({ message: 'Error al crear servicio', error: err });
   }
 });

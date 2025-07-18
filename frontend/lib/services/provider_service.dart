@@ -1,32 +1,44 @@
 import 'dart:convert';
-
-import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
+import '../configs/constants.dart';
+import '../models/http_error.dart';
 import '../models/service_http_response.dart';
 import '../models/entities/provider.dart';
 
 class ProviderService {
-  Future<ServiceHttpResponse?> fetchByIds(List<int> ids) async {
-    List<Provider> selectedProviders = [];
+  Future<ServiceHttpResponse?> fetchByIds(List<int> ids, String token) async {
     ServiceHttpResponse serviceResponse = ServiceHttpResponse();
+    final url = Uri.parse(BASE_URL + 'providers/by-ids'); // cambia si tu endpoint es otro
 
-      final String body =
-          await rootBundle.loadString('assets/jsons/provider.json');
-      final List<dynamic> data = jsonDecode(body);
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({'ids': ids}),
+      );
 
-      final allProviders = data
-          .map((map) => Provider.fromJson(map as Map<String, dynamic>))
-          .toList();
-
-      selectedProviders =
-          allProviders.where((p) => ids.contains(p.id)).toList();
-      if(selectedProviders.isNotEmpty){
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        final providers = data
+            .map((map) => Provider.fromJson(map as Map<String, dynamic>))
+            .toList();
         serviceResponse.status = 200;
-        serviceResponse.body = selectedProviders;
+        serviceResponse.body = providers;
+      } else {
+        final responseData = json.decode(response.body);
+        HttpError error = HttpError.fromJson(responseData);
+        serviceResponse.status = response.statusCode;
+        serviceResponse.body = error;
       }
-      else{
-        serviceResponse.status = 400;
-        serviceResponse.body = "Hubo un error en encontrar un Provider";
-      }
+    } catch (e) {
+      print('Ocurrió un error: $e');
+      serviceResponse.status = 500;
+      serviceResponse.body = null;
+    }
+
     return serviceResponse;
   }
 }

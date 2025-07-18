@@ -1,30 +1,41 @@
 import 'dart:convert';
-import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
+import '../configs/constants.dart';
+import '../models/http_error.dart';
 import '../models/service_http_response.dart';
 import '../models/entities/contact.dart';
-import '../models/entities/dependency.dart';
 
 class ContactService {
-  Future<ServiceHttpResponse?> fetchByDependency(Dependency dependency) async {
-    List<Contact> contacts = [];
+  Future<ServiceHttpResponse> fetchByDependency(
+    int dependencyId,
+    String token,
+  ) async {
     ServiceHttpResponse serviceResponse = ServiceHttpResponse();
+    final url = Uri.parse(BASE_URL + 'contacts/dependency/$dependencyId');
 
-    final String body =
-        await rootBundle.loadString('assets/jsons/contact.json');
-    final List<dynamic> data = jsonDecode(body);
+    try {
+      final response = await http.get(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
 
-    contacts = data
-        .map((map) => Contact.fromJson(map as Map<String, dynamic>))
-        .where((contact) => contact.dependencyId == dependency.id)
-        .toList();
-
-    if (contacts.isEmpty) {
-      serviceResponse.status = 404;
-      serviceResponse.body =
-          'No se encontraron contactos para esta dependencia.';
-    } else {
-      serviceResponse.status = 200;
-      serviceResponse.body = contacts;
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        final contacts = data.map((e) => Contact.fromJson(e)).toList();
+        serviceResponse.status = 200;
+        serviceResponse.body = contacts;
+      } else {
+        final error = HttpError.fromJson(jsonDecode(response.body));
+        serviceResponse.status = response.statusCode;
+        serviceResponse.body = error;
+      }
+    } catch (e) {
+      print('Error al obtener contactos por dependencia: $e');
+      serviceResponse.status = 500;
+      serviceResponse.body = null;
     }
 
     return serviceResponse;

@@ -1,6 +1,6 @@
 class Isp {
   final int? id;
-  final String ruc;
+  final String? ruc;
   final String name;
 
 

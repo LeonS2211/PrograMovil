@@ -127,6 +127,8 @@ class FinancialStatementController extends GetxController {
 
   Future<void> _loadIngresos(Provider provider) async {
     try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('jwt_token');
       print('Cargando ingresos para provider ID: ${provider.id}');
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('jwt_token');
@@ -168,7 +170,8 @@ class FinancialStatementController extends GetxController {
                 dependencyName = dependency.name;
 
                 final companyResponse = await companyService
-                    .getCompanyRucById(dependency.companyId);
+                    .getCompanyRucById(dependency.companyId,token!);
+                    
                 if (companyResponse?.status == 200) {
                   companyRuc = companyResponse!.body;
                 }

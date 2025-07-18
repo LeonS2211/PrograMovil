@@ -19,300 +19,7 @@ import '../../models/entities/invoice.dart';
 import '../../models/entities/dependency.dart';
 import '../../models/entities/isp.dart';
 import '../../selected_provider_controller.dart';
-
 import 'package:shared_preferences/shared_preferences.dart';
-//import '../../models/service_http_response.dart';
-/*
-// Modelo para estructurar los datos financieros
-class FinancialItem {
-  final String name;
-  final String ruc;
-  final String date;
-  final String dependency;
-  final String amount;
-  final String? ispName;
-
-  FinancialItem({
-    required this.name,
-    required this.ruc,
-    required this.date,
-    required this.dependency,
-    required this.amount,
-    this.ispName,
-  });
-}
-
-class FinancialStatementController extends GetxController {
-  final ProviderServiceService _providerServiceService =
-      ProviderServiceService();
-  final IspServiceService _ispServiceService = IspServiceService();
-  final InvoiceService _invoiceService = InvoiceService();
-  final DependencyService _dependencyService = DependencyService();
-  final CompanyService _companyService = CompanyService();
-  final isp_svc.IspService _ispService = isp_svc.IspService();
-
-  var ingresos = <FinancialItem>[].obs;
-  var egresos = <FinancialItem>[].obs;
-  var isLoading = false.obs;
-  var totalIngresos = 0.0.obs;
-  var totalEgresos = 0.0.obs;
-  var saldoTotal = 0.0.obs;
-
-  @override
-  void onInit() {
-    super.onInit();
-    loadFinancialData();
-  }
-
-  Future<void> loadFinancialData() async {
-    try {
-      isLoading.value = true;
-
-      // Obtener el provider seleccionado correctamente
-      final selectedProviderController = Get.find<SelectedProviderController>();
-      final provider = selectedProviderController.provider; // Usar el getter
-
-      print('=== INICIO CARGA DE DATOS ===');
-      print('Provider seleccionado: ID=${provider.id}, Name=${provider.name}');
-      print('RUC: ${provider.ruc}');
-
-      await _loadIngresos(provider);
-      print('Ingresos cargados: ${ingresos.length}');
-
-      await _loadEgresos(provider);
-      print('Egresos cargados: ${egresos.length}');
-
-      _calculateTotals();
-      print('=== FIN CARGA DE DATOS ===');
-    } catch (e) {
-      print('ERROR EN loadFinancialData: $e');
-    } finally {
-      isLoading.value = false;
-    }
-  }
-
-  Future<void> _loadIngresos(Provider provider) async {
-    try {
-      print('Cargando ingresos para provider ID: ${provider.id}');
-
-      // 1. Obtener Provider Services
-      final providerServicesResponse =
-          await _providerServiceService.fetchByProvider(provider);
-
-      print(
-          'Provider Services Response Status: ${providerServicesResponse.status}');
-
-      if (providerServicesResponse.status == 200) {
-        final List<ProviderService> providerServices =
-            providerServicesResponse.body;
-
-        print('Provider Services encontrados: ${providerServices.length}');
-
-        if (providerServices.isEmpty) {
-          print(
-              'No hay servicios de provider para el provider ID: ${provider.id}');
-          return;
-        }
-
-        // 2. Obtener facturas de Provider Services
-        final invoicesResponse =
-            await _invoiceService.getProviderInvoice(providerServices);
-
-        print('Invoices Response Status: ${invoicesResponse.status}');
-
-        if (invoicesResponse.status == 200) {
-          final List<Invoice> invoices = invoicesResponse.body;
-
-          print('Facturas encontradas: ${invoices.length}');
-
-          List<FinancialItem> ingresosTemp = [];
-
-          for (Invoice invoice in invoices) {
-            try {
-              // Encontrar el service correspondiente
-              final service = providerServices.firstWhereOrNull(
-                (s) => s.id == invoice.serviceId,
-              );
-
-              if (service == null) {
-                print('Service not found for invoice ${invoice.id}');
-                continue;
-              }
-
-              // Obtener información de la dependencia
-              final dependencyResponse = await _dependencyService
-                  .getDependencyById(service.dependencyId);
-
-              String dependencyName = '';
-              String companyRuc = '';
-
-              if (dependencyResponse?.status == 200) {
-                final Dependency dependency = dependencyResponse!.body;
-                dependencyName = dependency.name;
-
-                // Obtener información de la compañía
-                final companyResponse = await _companyService
-                    .getCompanyRucById(dependency.companyId);
-
-                if (companyResponse?.status == 200) {
-                  companyRuc = companyResponse!.body;
-                }
-              }
-
-              ingresosTemp.add(FinancialItem(
-                name: service.description,
-                ruc: companyRuc,
-                date: _formatDate(invoice.issueDate),
-                dependency: dependencyName,
-                amount: 'S/ ${service.price.toStringAsFixed(2)}',
-              ));
-
-              print(
-                  'Ingreso agregado: ${service.description} - S/ ${service.price}');
-            } catch (e) {
-              print('Error procesando factura ${invoice.id}: $e');
-            }
-          }
-
-          ingresos.value = ingresosTemp;
-          print('Total ingresos cargados: ${ingresosTemp.length}');
-        } else {
-          print('Error obteniendo facturas: ${invoicesResponse.status}');
-        }
-      } else {
-        print(
-            'Error obteniendo provider services: ${providerServicesResponse.status}');
-      }
-    } catch (e) {
-      print('Error loading ingresos: $e');
-    }
-  }
-
-  Future<void> _loadEgresos(Provider provider) async {
-    try {
-      print('Cargando egresos para provider ID: ${provider.id}');
-
-      // 1. Obtener ISP Services
-      final ispServicesResponse =
-          await _ispServiceService.fetchByProvider(provider);
-
-      print('ISP Services Response Status: ${ispServicesResponse.status}');
-
-      if (ispServicesResponse.status == 200) {
-        final List<IspService> ispServices = ispServicesResponse.body;
-
-        print('ISP Services encontrados: ${ispServices.length}');
-
-        if (ispServices.isEmpty) {
-          print('No hay servicios ISP para el provider ID: ${provider.id}');
-          return;
-        }
-
-        // 2. Obtener facturas de ISP Services
-        final invoicesResponse =
-            await _invoiceService.getIspInvoice(ispServices);
-
-        print('ISP Invoices Response Status: ${invoicesResponse.status}');
-
-        if (invoicesResponse.status == 200) {
-          final List<Invoice> invoices = invoicesResponse.body;
-
-          print('Facturas ISP encontradas: ${invoices.length}');
-
-          List<FinancialItem> egresosTemp = [];
-
-          for (Invoice invoice in invoices) {
-            try {
-              // Encontrar el service correspondiente
-              final service = ispServices.firstWhereOrNull(
-                (s) => s.id == invoice.serviceId,
-              );
-
-              if (service == null) {
-                print('ISP Service not found for invoice ${invoice.id}');
-                continue;
-              }
-              // Obtener información del ISP
-              final ispResponse = await _ispService.getIspById(service.ispId);
-              String ispName = '';
-              String ispRuc = '';
-
-              if (ispResponse?.status == 200) {
-                final Isp isp = ispResponse!.body;
-                ispName = isp.name;
-                ispRuc = isp.ruc;
-              }
-
-              // Obtener información de la dependencia
-              final dependencyResponse = await _dependencyService
-                  .getDependencyById(service.providerId);
-
-              String dependencyName = '';
-
-              if (dependencyResponse?.status == 200) {
-                final Dependency dependency = dependencyResponse!.body;
-                dependencyName = dependency.name;
-              }
-
-              egresosTemp.add(FinancialItem(
-                name: service.description,
-                ruc: ispRuc,
-                date: _formatDate(invoice.issueDate),
-                dependency: dependencyName,
-                amount: 'S/ ${service.cost.toStringAsFixed(2)}',
-                ispName: ispName,
-              ));
-
-              print(
-                  'Egreso agregado: ${service.description} - S/ ${service.cost}');
-            } catch (e) {
-              print('Error procesando factura ISP ${invoice.id}: $e');
-            }
-          }
-
-          egresos.value = egresosTemp;
-          print('Total egresos cargados: ${egresosTemp.length}');
-        } else {
-          print('Error obteniendo facturas ISP: ${invoicesResponse.status}');
-        }
-      } else {
-        print('Error obteniendo ISP services: ${ispServicesResponse.status}');
-      }
-    } catch (e) {
-      print('Error loading egresos: $e');
-    }
-  }
-
-  void _calculateTotals() {
-    // Calcular total de ingresos
-    double totalIng = 0.0;
-    for (var item in ingresos) {
-      final amount = item.amount.replaceAll('S/ ', '').replaceAll(',', '');
-      totalIng += double.tryParse(amount) ?? 0.0;
-    }
-    totalIngresos.value = totalIng;
-
-    // Calcular total de egresos
-    double totalEgr = 0.0;
-    for (var item in egresos) {
-      final amount = item.amount.replaceAll('S/ ', '').replaceAll(',', '');
-      totalEgr += double.tryParse(amount) ?? 0.0;
-    }
-    totalEgresos.value = totalEgr;
-
-    // Calcular saldo total
-    saldoTotal.value = totalIngresos.value - totalEgresos.value;
-
-    print('Totales calculados:');
-    print('- Ingresos: S/ ${totalIngresos.value}');
-    print('- Egresos: S/ ${totalEgresos.value}');
-    print('- Saldo: S/ ${saldoTotal.value}');
-  }
-
-  String _formatDate(DateTime date) {
-    return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
-  }
-*/
 
 class FinancialItem {
   final String name;
@@ -443,13 +150,16 @@ class FinancialStatementController extends GetxController {
 
           for (Invoice invoice in invoices) {
             try {
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+              String? token = prefs.getString('jwt_token');
+
               final service = providerServices.firstWhereOrNull(
                 (s) => s.id == invoice.serviceId,
               );
               if (service == null) continue;
 
               final dependencyResponse = await dependencyService
-                  .getDependencyById(service.dependencyId);
+                  .getDependencyById(service.dependencyId, token!);
               String dependencyName = '';
               String companyRuc = '';
 
@@ -511,6 +221,9 @@ class FinancialStatementController extends GetxController {
 
           for (Invoice invoice in invoices) {
             try {
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+              String? token = prefs.getString('jwt_token');
+
               final service = ispServices.firstWhereOrNull(
                 (s) => s.id == invoice.serviceId,
               );
@@ -523,11 +236,11 @@ class FinancialStatementController extends GetxController {
               if (ispResponse?.status == 200) {
                 final Isp isp = ispResponse!.body;
                 ispName = isp.name;
-                ispRuc = isp.ruc;
+                ispRuc = isp.ruc ?? '';
               }
 
-              final dependencyResponse =
-                  await dependencyService.getDependencyById(service.providerId);
+              final dependencyResponse = await dependencyService
+                  .getDependencyById(service.providerId, token!);
               String dependencyName = '';
               if (dependencyResponse?.status == 200) {
                 final Dependency dependency = dependencyResponse!.body;

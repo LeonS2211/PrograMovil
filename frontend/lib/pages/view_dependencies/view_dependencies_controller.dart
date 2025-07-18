@@ -1,8 +1,9 @@
 import 'package:get/get.dart';
 import 'package:helloworld/models/entities/dependency.dart';
-import 'package:helloworld/models/entities/company.dart';
 import 'package:helloworld/services/dependency_service.dart';
+import 'package:helloworld/models/entities/company.dart';
 import 'package:helloworld/selected_provider_controller.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ViewDependenciesController extends GetxController {
   var isLoading = true.obs;
@@ -10,30 +11,30 @@ class ViewDependenciesController extends GetxController {
 
   final DependencyService _dependencyService = DependencyService();
   final provider = Get.find<SelectedProviderController>().provider;
+
+  /// Cargar dependencias según provider y company como ya tenías
   Future<void> loadDependencies(String companyId) async {
     try {
       isLoading.value = true;
-
       final companyIdInt = int.tryParse(companyId) ?? 0;
+      final providerId = provider.id;
 
-      // Crear Provider dummy con todos los campos obligatorios
-      final dummyProvider = provider;
+      // Leer el token desde SharedPreferences
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('jwt_token');
 
-      // Crear Company dummy con todos los campos obligatorios
-      final company = Company(
-        id: companyIdInt,
-        addressId: 0,
-        ruc: '',
-        name: '',
+      // Llamada al servicio usando los IDs y el token
+      final response = await _dependencyService.fetchByProviderAndCompany(
+        providerId,
+        companyIdInt,
+        token!,
       );
 
-      final response = await _dependencyService.fetchByProviderAndCompany(dummyProvider, company);
-
-      if (response != null && response.status == 200) {
+      if (response.status == 200) {
         dependencies.value = List<Dependency>.from(response.body);
       } else {
         dependencies.clear();
-        Get.snackbar('Aviso', response?.body?.toString() ?? 'No se encontraron dependencias.');
+        Get.snackbar('Aviso', response.body.toString());
       }
     } catch (e) {
       Get.snackbar('Error', 'Error al cargar dependencias: $e');

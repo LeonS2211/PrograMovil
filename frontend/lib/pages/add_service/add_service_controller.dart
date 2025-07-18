@@ -11,6 +11,7 @@ import 'package:helloworld/services/provider_service_service.dart';
 import 'package:helloworld/services/isp_service_service.dart' as service;
 import 'package:helloworld/services/isp_service.dart' as service;
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../models/service_http_response.dart';
 
 class AddServiceController extends GetxController {
   final descripcion = TextEditingController();
@@ -209,9 +210,10 @@ class AddServiceController extends GetxController {
     }
   }
 
-
   Future<void> guardarNuevoProviderService(
       BuildContext context, int providerId, int dependencyId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('jwt_token');
     if (!validarCampos(false)) {
       mostrarSnackbarSeguro('Error', 'Todos los campos son obligatorios.');
       return;
@@ -227,7 +229,7 @@ class AddServiceController extends GetxController {
       );
 
       final response =
-          await ProviderServiceService().createNewService(nuevoServicio);
+          await ProviderServiceService().createNewService(token!, nuevoServicio);
 
       if (response.status == 201) {
         mostrarDialogosConfirmacion(context, false);

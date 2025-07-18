@@ -1,94 +1,108 @@
 import 'dart:convert';
-import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
+import '../configs/constants.dart';
+import '../models/http_error.dart';
 import '../models/service_http_response.dart';
 import '../models/entities/dependency.dart';
-import '../models/entities/provider.dart';
-import '../models/entities/company.dart';
 
 class DependencyService {
-  List<Dependency> dependencies = [];
-
-  // Carga las dependencias desde el archivo JSON solo si no se ha hecho antes
-  Future<void> _loadData() async {
-    if (dependencies.isNotEmpty) return; // Si ya están cargadas, no cargar de nuevo
-
-    final String body = await rootBundle.loadString('assets/jsons/dependency.json');
-    final List<dynamic> data = jsonDecode(body);
-
-    dependencies = data.map((map) => Dependency.fromJson(map as Map<String, dynamic>)).toList();
-  }
-
-  // Devuelve las dependencias asociadas a un proveedor y una compañía
-  Future<ServiceHttpResponse?> fetchByProviderAndCompany(
-      Provider provider, Company company) async {
+  Future<ServiceHttpResponse> getDependencyById(int id, String token) async {
     ServiceHttpResponse serviceResponse = ServiceHttpResponse();
+    final url = Uri.parse(BASE_URL + 'dependencies/$id');
 
-    // Cargar datos si aún no se han cargado
-    await _loadData();
+    try {
+      final response = await http.get(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
 
-    // Filtrar dependencias por proveedor y compañía
-    List<Dependency> filteredDependencies = dependencies.where((dependency) =>
-        dependency.providerId == provider.id && dependency.companyId == company.id).toList();
-
-    if (filteredDependencies.isEmpty) {
-      serviceResponse.status = 404;
-      serviceResponse.body = 'No se encontraron dependencias para el proveedor y la compañía especificados.';
-    } else {
-      serviceResponse.status = 200;
-      serviceResponse.body = filteredDependencies;
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        serviceResponse.status = 200;
+        serviceResponse.body = Dependency.fromJson(data);
+      } else {
+        final error = HttpError.fromJson(jsonDecode(response.body));
+        serviceResponse.status = response.statusCode;
+        serviceResponse.body = error;
+      }
+    } catch (e) {
+      print('Error al obtener dependencia: $e');
+      serviceResponse.status = 500;
+      serviceResponse.body = null;
     }
 
     return serviceResponse;
   }
 
-  // Devuelve una dependencia específica por su id
-  Future<ServiceHttpResponse?> getDependencyById(int id) async {
+  Future<ServiceHttpResponse> fetchByProviderAndCompany(
+    int? providerId,
+    int companyId,
+    String token,
+  ) async {
     ServiceHttpResponse serviceResponse = ServiceHttpResponse();
-    await _loadData(); // Asegúrate de que los datos estén cargados
+    final url = Uri.parse(
+      BASE_URL + 'dependencies/provider/$providerId/company/$companyId',
+    );
 
     try {
-      serviceResponse.status = 200;
-      serviceResponse.body = dependencies.firstWhere((dependency) => dependency.id == id);
-      return serviceResponse;
+      final response = await http.get(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        final dependencies = data.map((e) => Dependency.fromJson(e)).toList();
+        serviceResponse.status = 200;
+        serviceResponse.body = dependencies;
+      } else {
+        final error = HttpError.fromJson(jsonDecode(response.body));
+        serviceResponse.status = response.statusCode;
+        serviceResponse.body = error;
+      }
     } catch (e) {
-      serviceResponse.status = 404;
+      print('Error al obtener dependencias: $e');
+      serviceResponse.status = 500;
       serviceResponse.body = null;
-      return serviceResponse;
     }
+
+    return serviceResponse;
   }
 
-  Future<ServiceHttpResponse?> fetchAllNamesWithId() async {
-  ServiceHttpResponse serviceResponse = ServiceHttpResponse();
+  Future<ServiceHttpResponse> fetchAllProviderNames(String token) async {
+    ServiceHttpResponse serviceResponse = ServiceHttpResponse();
+    final url = Uri.parse(BASE_URL + 'dependencies/providers/names');
 
-  // Cargar el archivo JSON
-  final String lectura = await rootBundle.loadString('assets/jsons/provider.json');
-  final List<dynamic> data = jsonDecode(lectura);
+    try {
+      final response = await http.get(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
 
-  // Convertir los datos JSON en una lista de objetos Provider
-  List<Provider> names = data.map((e) => Provider.fromJson(e)).toList();
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        serviceResponse.status = 200;
+        serviceResponse.body = data;
+      } else {
+        final error = HttpError.fromJson(jsonDecode(response.body));
+        serviceResponse.status = response.statusCode;
+        serviceResponse.body = error;
+      }
+    } catch (e) {
+      print('Error al obtener nombres de proveedores: $e');
+      serviceResponse.status = 500;
+      serviceResponse.body = null;
+    }
 
-  // Crear una lista de mapas con los valores de id y name
-  List<Map<String, dynamic>> providerNamesWithId = names.map((provider) {
-    return {
-      'id': provider.id,  // Obtener el id
-      'name': provider.name  // Obtener el name
-    };
-  }).toList();
-
-  // Configurar la respuesta del servicio
-  serviceResponse.status = 200;
-  serviceResponse.body = providerNamesWithId;
-
-  return serviceResponse;
-}
-
-Future<void> fetchAllDependencies() async {
-  if (dependencies.isNotEmpty) return;
-
-  final String body = await rootBundle.loadString('assets/jsons/dependency.json');
-  final List<dynamic> data = jsonDecode(body);
-
-  dependencies = data.map((map) => Dependency.fromJson(map as Map<String, dynamic>)).toList();
-}
-
+    return serviceResponse;
+  }
 }

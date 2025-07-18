@@ -36,7 +36,10 @@ class SignInController extends GetxController {
     ));
 
     if (response?.status == 200 && response!.body != null) {
-      final List<int> providerIds = List<int>.from(response.body.listProvider);
+      UserToken userToken = response.body;
+      List<int> providerIds = userToken.admin.listProvider!;
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('jwt_token', userToken.token);
 
       Navigator.pushNamed(
         context,

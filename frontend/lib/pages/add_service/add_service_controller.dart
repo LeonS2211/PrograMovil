@@ -10,6 +10,7 @@ import 'package:helloworld/services/dependency_service.dart';
 import 'package:helloworld/services/provider_service_service.dart';
 import 'package:helloworld/services/isp_service_service.dart' as service;
 import 'package:helloworld/services/isp_service.dart' as service;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AddServiceController extends GetxController {
   final descripcion = TextEditingController();
@@ -172,6 +173,43 @@ class AddServiceController extends GetxController {
     }
   }
 
+  Future<void> guardarNuevoServicio(
+      BuildContext context, int providerId) async {
+    if (!validarCampos(true)) {
+      Get.snackbar('Error', 'Todos los campos son obligatorios.',
+          backgroundColor: Colors.redAccent, colorText: Colors.white);
+      return;
+    }
+
+    try {
+      final ispService = model.IspService(
+        id: null,
+        ispId: selectedIspId.value!,
+        providerId: providerId,
+        description: descripcionController.text.trim(),
+        cost: double.tryParse(precioController.text.trim()) ?? 0.0,
+        payCode: codigoPagoController.text.trim(),
+      );
+
+      final response =
+          await service.IspServiceService().createNewService(ispService);
+
+      if (response.status == 201) {
+        mostrarDialogosConfirmacion(context, true);
+      } else if (response.status == 409) {
+        Get.snackbar('Duplicado', 'El servicio ya existe.',
+            backgroundColor: Colors.orange, colorText: Colors.black);
+      } else {
+        Get.snackbar('Error', 'No se pudo registrar el servicio.',
+            backgroundColor: Colors.redAccent, colorText: Colors.white);
+      }
+    } catch (e) {
+      Get.snackbar('Error', 'Ocurrió un problema: $e',
+          backgroundColor: Colors.red, colorText: Colors.white);
+    }
+  }
+
+
   Future<void> guardarNuevoProviderService(
       BuildContext context, int providerId, int dependencyId) async {
     if (!validarCampos(false)) {
@@ -188,7 +226,8 @@ class AddServiceController extends GetxController {
         price: double.tryParse(precio.text.trim()) ?? 0.0,
       );
 
-      final response = await ProviderServiceService().createNewService(nuevoServicio);
+      final response =
+          await ProviderServiceService().createNewService(nuevoServicio);
 
       if (response.status == 201) {
         mostrarDialogosConfirmacion(context, false);
@@ -232,9 +271,12 @@ class AddServiceController extends GetxController {
     }
 
     try {
+      // Obtener el token desde SharedPreferences
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('jwt_token');
+
       final dependencyService = DependencyService();
-      final response = await dependencyService.fetchByProviderAndCompany(
-          currentProvider!, currentCompany!);
+      final response = await dependencyService.fetchAllProviderNames(token!);
 
       if (response?.status == 200 && response?.body != null) {
         final List<dynamic> data = response!.body;
@@ -268,13 +310,3 @@ class AddServiceController extends GetxController {
     super.onClose();
   }
 }
-
-
-
-
-
-  
-
-
-
-

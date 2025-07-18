@@ -9,50 +9,105 @@ import 'package:helloworld/models/entities/provider_service.dart';
 import 'package:helloworld/services/dependency_service.dart';
 import 'package:helloworld/services/provider_service_service.dart';
 import 'package:helloworld/services/isp_service_service.dart' as service;
-import 'package:helloworld/services/isp_service.dart'as service;
+import 'package:helloworld/services/isp_service.dart' as service;
 
 class AddServiceController extends GetxController {
-  // Controladores para la versión simple
   final descripcion = TextEditingController();
   final precio = TextEditingController();
 
-  // Controladores para la versión detallada (ISP)
   final descripcionController = TextEditingController();
   final precioController = TextEditingController();
   final codigoPagoController = TextEditingController();
-  final selectedIsp = RxnString(); // para el Dropdown
 
-  // Método para limpiar todos los campos
+  final selectedIspId = RxnInt();
+  final selectedDependencyId = RxnInt();
+
+  var ispList = <Isp>[].obs;
+  var dependencyList = <Dependency>[].obs;
+
+  var isLoading = false.obs;
+
+  Provider? currentProvider;
+  Company? currentCompany;
+
   void limpiarCampos(bool isp) {
     if (isp) {
       descripcionController.clear();
       precioController.clear();
       codigoPagoController.clear();
-      selectedIsp.value = null;
+      selectedIspId.value = null;
     } else {
       descripcion.clear();
       precio.clear();
     }
   }
 
-  // Navegación a la pantalla de servicios registrados
-  void gotoRegisterService(BuildContext context, bool volver) {
-    Navigator.pushNamed(context, '/registerService', arguments: volver);
-  }
-
-  // Validación de los datos ingresados
   bool validarCampos(bool isp) {
     if (isp) {
       return descripcionController.text.isNotEmpty &&
-             precioController.text.isNotEmpty &&
-             codigoPagoController.text.isNotEmpty &&
-             selectedIsp.value != null;
+          precioController.text.isNotEmpty &&
+          codigoPagoController.text.isNotEmpty &&
+          selectedIspId.value != null;
     } else {
       return descripcion.text.isNotEmpty && precio.text.isNotEmpty;
     }
   }
 
-  // Muestra los dos modales en cascada
+  void mostrarSnackbarSeguro(String titulo, String mensaje,
+      {Color backgroundColor = Colors.redAccent, Color colorText = Colors.white}) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Get.snackbar(titulo, mensaje,
+          backgroundColor: backgroundColor, colorText: colorText);
+    });
+  }
+
+  void gotoRegisterService(BuildContext context, bool volver) {
+    Navigator.pushNamed(context, '/registerService', arguments: volver);
+  }
+
+  Future<void> guardarNuevoServicio(BuildContext context, int providerId) async {
+    print("Descripcion: ${descripcionController.text}");
+    print("Precio: ${precioController.text}");
+    print("Codigo Pago: ${codigoPagoController.text}");
+    print("Selected ISP: ${selectedIspId.value}");
+    print("Selected ISP ID: ${selectedIspId.value}");
+
+    if (!validarCampos(true)) {
+      mostrarSnackbarSeguro('Error', 'Todos los campos son obligatorios.');
+      return;
+    }
+
+    try {
+      final ispService = model.IspService(
+        id: null,
+        ispId: selectedIspId.value!,
+        providerId: providerId,
+        description: descripcionController.text.trim(),
+        cost: double.tryParse(precioController.text.trim()) ?? 0.0,
+        payCode: codigoPagoController.text.trim(),
+      );
+
+      // 🚩 DEBUG: imprimir antes de enviar
+      print("📤 Enviando datos al backend...");
+
+      final response = await service.IspServiceService().createNewService(ispService);
+
+      // 🚩 DEBUG: imprimir respuesta recibida
+      print("✅ Respuesta recibida: ${response.body}");
+
+      if (response.status == 201) {
+        mostrarDialogosConfirmacion(context, true);
+      } else if (response.status == 409) {
+        mostrarSnackbarSeguro('Duplicado', 'El servicio ya existe.',
+            backgroundColor: Colors.orange, colorText: Colors.black);
+      } else {
+        mostrarSnackbarSeguro('Error', 'No se pudo registrar el servicio.');
+      }
+    } catch (e) {
+      mostrarSnackbarSeguro('Error', 'Ocurrió un problema: $e');
+    }
+  }
+
   void mostrarDialogosConfirmacion(BuildContext context, bool isp) async {
     bool? confirmed = await showDialog<bool>(
       context: context,
@@ -117,44 +172,10 @@ class AddServiceController extends GetxController {
     }
   }
 
-  Future<void> guardarNuevoServicio(BuildContext context, int providerId) async {
-    if (!validarCampos(true)) {
-      Get.snackbar('Error', 'Todos los campos son obligatorios.',
-          backgroundColor: Colors.redAccent, colorText: Colors.white);
-      return;
-    }
-
-    try {
-      final ispService = model.IspService(
-        id: null,
-        ispId: selectedIspId.value!,
-        providerId: providerId,
-        description: descripcionController.text.trim(),
-        cost: double.tryParse(precioController.text.trim()) ?? 0.0,
-        payCode: codigoPagoController.text.trim(),
-      );
-
-      final response = await service.IspServiceService().createNewService(ispService);
-
-      if (response.status == 201) {
-        mostrarDialogosConfirmacion(context, true);
-      } else if (response.status == 409) {
-        Get.snackbar('Duplicado', 'El servicio ya existe.',
-            backgroundColor: Colors.orange, colorText: Colors.black);
-      } else {
-        Get.snackbar('Error', 'No se pudo registrar el servicio.',
-            backgroundColor: Colors.redAccent, colorText: Colors.white);
-      }
-    } catch (e) {
-      Get.snackbar('Error', 'Ocurrió un problema: $e',
-          backgroundColor: Colors.red, colorText: Colors.white);
-    }
-  }
-
-  Future<void> guardarNuevoProviderService(BuildContext context, int providerId, int dependencyId) async {
+  Future<void> guardarNuevoProviderService(
+      BuildContext context, int providerId, int dependencyId) async {
     if (!validarCampos(false)) {
-      Get.snackbar('Error', 'Todos los campos son obligatorios.',
-          backgroundColor: Colors.redAccent, colorText: Colors.white);
+      mostrarSnackbarSeguro('Error', 'Todos los campos son obligatorios.');
       return;
     }
 
@@ -172,70 +193,61 @@ class AddServiceController extends GetxController {
       if (response.status == 201) {
         mostrarDialogosConfirmacion(context, false);
       } else if (response.status == 409) {
-        Get.snackbar('Duplicado', 'El servicio ya existe.',
+        mostrarSnackbarSeguro('Duplicado', 'El servicio ya existe.',
             backgroundColor: Colors.orange, colorText: Colors.black);
       } else {
-        Get.snackbar('Error', 'No se pudo registrar el servicio.',
-            backgroundColor: Colors.redAccent, colorText: Colors.white);
+        mostrarSnackbarSeguro('Error', 'No se pudo registrar el servicio.');
       }
     } catch (e) {
-      Get.snackbar('Error', 'Ocurrió un problema: $e',
-          backgroundColor: Colors.red, colorText: Colors.white);
+      mostrarSnackbarSeguro('Error', 'Ocurrió un problema: $e');
     }
   }
 
-  // Lista reactiva para los ISPs
-  var ispList = <Isp>[].obs;
-
-  final selectedIspId = RxnInt();
-
   Future<void> cargarIsps() async {
+    isLoading.value = true;
     try {
       final ispService = service.IspService();
       final response = await ispService.fetchAllNamesWithId();
 
       if (response?.status == 200 && response?.body != null) {
-        ispList.assignAll(response!.body as List<Isp>);
+        final List<dynamic> data = response!.body;
+        final List<Isp> loadedIsps = data.map((e) => Isp.fromJson(e)).toList();
+        ispList.assignAll(loadedIsps);
       } else {
         ispList.clear();
-        Get.snackbar('Info', 'No hay ISPs disponibles',
+        mostrarSnackbarSeguro('Info', 'No hay ISPs disponibles.',
             backgroundColor: Colors.orange, colorText: Colors.black);
       }
     } catch (e) {
-      Get.snackbar('Error', 'No se pudo cargar las dependencias',
-          backgroundColor: Colors.redAccent, colorText: Colors.white);
+      mostrarSnackbarSeguro('Error', 'No se pudo cargar los ISPs.');
+    } finally {
+      isLoading.value = false;
     }
   }
 
-  // Lista reactiva para dependencias
-  var dependencyList = <Dependency>[].obs;
-
-  final selectedDependencyId = RxnInt();
-
-  Provider? currentProvider;
-  Company? currentCompany;
-
   Future<void> cargarDependencias() async {
     if (currentProvider == null || currentCompany == null) {
-      Get.snackbar('Error', 'Provider o Company no definidos',
-          backgroundColor: Colors.redAccent, colorText: Colors.white);
+      dependencyList.clear();
       return;
     }
 
     try {
       final dependencyService = DependencyService();
-      final response = await dependencyService.fetchByProviderAndCompany(currentProvider!, currentCompany!);
+      final response = await dependencyService.fetchByProviderAndCompany(
+          currentProvider!, currentCompany!);
 
       if (response?.status == 200 && response?.body != null) {
-        dependencyList.assignAll(response!.body as List<Dependency>);
+        final List<dynamic> data = response!.body;
+        final List<Dependency> loadedDeps =
+            data.map((e) => Dependency.fromJson(e)).toList();
+        dependencyList.assignAll(loadedDeps);
       } else {
         dependencyList.clear();
-        Get.snackbar('Info', 'No hay dependencias disponibles',
+        mostrarSnackbarSeguro('Info', 'No hay dependencias disponibles.',
             backgroundColor: Colors.orange, colorText: Colors.black);
       }
     } catch (e) {
-      Get.snackbar('Error', 'No se pudo cargar dependencias',
-          backgroundColor: Colors.redAccent, colorText: Colors.white);
+      mostrarSnackbarSeguro('Error', 'No se pudo cargar las dependencias.');
     }
   }
 
@@ -256,6 +268,9 @@ class AddServiceController extends GetxController {
     super.onClose();
   }
 }
+
+
+
 
 
   

@@ -81,4 +81,14 @@ class DependencyService {
 
   return serviceResponse;
 }
+
+Future<void> fetchAllDependencies() async {
+  if (dependencies.isNotEmpty) return;
+
+  final String body = await rootBundle.loadString('assets/jsons/dependency.json');
+  final List<dynamic> data = jsonDecode(body);
+
+  dependencies = data.map((map) => Dependency.fromJson(map as Map<String, dynamic>)).toList();
+}
+
 }

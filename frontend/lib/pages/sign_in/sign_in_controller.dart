@@ -36,7 +36,6 @@ class SignInController extends GetxController {
     ));
 
     if (response?.status == 200 && response!.body != null) {
-    
       UserToken userToken = response.body;
       List<int> providerIds = userToken.admin.listProvider!;
       SharedPreferences prefs = await SharedPreferences.getInstance();

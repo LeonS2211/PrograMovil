@@ -44,6 +44,6 @@ chatSocket(io);
 
 // ✅ Usar el puerto dinámico de Replit o 3000 por defecto
 const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
-  console.log(`Servidor corriendo en http://localhost:${PORT}`);
+server.listen(PORT, '0.0.0.0', () => {
+  console.log(`Servidor corriendo en http://0.0.0.0:${PORT}`);
 });

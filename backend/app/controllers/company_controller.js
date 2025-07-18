@@ -1,11 +1,11 @@
 const express = require("express");
 const Company = require("../models/company");
-const Address = require("../models/address");
+const { jwtMiddleware } = require("../../config/middlewares");
 
 const router = express.Router();
 
 // Obtener todas las empresas
-router.get("/", async (req, res) => {
+router.get("/", jwtMiddleware, async (req, res) => {
   try {
     const companies = await Company.findAll();
     res.status(200).json(companies);
@@ -15,7 +15,7 @@ router.get("/", async (req, res) => {
 });
 
 // Obtener RUC de una empresa por ID
-router.get("/:id/ruc", async (req, res) => {
+router.get("/:id/ruc", jwtMiddleware, async (req, res) => {
   const { id } = req.params;
   try {
     const company = await Company.findByPk(id);

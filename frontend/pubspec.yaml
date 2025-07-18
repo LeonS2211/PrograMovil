@@ -21,6 +21,8 @@ dependencies:
   google_fonts: ^6.1.0
   get: ^4.6.5
   flutter_launcher_icons: "^0.13.1"
+  http: ^1.4.0
+  shared_preferences: ^2.2.2
 
 dev_dependencies:
   flutter_test:

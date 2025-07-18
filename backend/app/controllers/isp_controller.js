@@ -1,11 +1,11 @@
 const express = require('express');
 const ISP = require('../models/isp');
 const Dependency = require('../models/dependency'); // 👈 NUEVO IMPORTANTE
-
+const { jwtMiddleware } = require("../../config/middlewares");
 const router = express.Router();
 
 // GET /isps → todos los ISPs
-router.get('/', async (req, res) => {
+router.get('/', jwtMiddleware, async (req, res) => {
   try {
     const isps = await ISP.findAll();
     const result = isps.map(isp => ({ id: isp.id, name: isp.name }));
@@ -16,7 +16,7 @@ router.get('/', async (req, res) => {
 });
 
 // GET /isps/:id → un ISP por ID
-router.get('/:id', async (req, res) => {
+router.get('/:id', jwtMiddleware, async (req, res) => {
   try {
     const id = parseInt(req.params.id, 10);
     const isp = await ISP.findByPk(id);
@@ -31,7 +31,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // POST /isps → agregar un ISP
-router.post('/', async (req, res) => {
+router.post('/', jwtMiddleware, async (req, res) => {
   const { name, ruc } = req.body;
 
   if (!name) {
